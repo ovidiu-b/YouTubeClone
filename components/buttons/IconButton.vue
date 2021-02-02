@@ -1,5 +1,5 @@
 <template>
-    <button :style="{ color: color }" class="material-icons rounded-full focus:outline-none">{{ name }}</button>
+    <button :style="{ color: color }" class="material-icons">{{ name }}</button>
 </template>
 
 <script lang="ts">
@@ -15,4 +15,12 @@
     }
 </script>
 
-<style scoped></style>
+<style scoped lang="postcss">
+    button {
+        @apply rounded-full;
+    }
+
+    button:focus {
+        @apply outline-none;
+    }
+</style>
