@@ -17,10 +17,6 @@
 
 <style scoped lang="postcss">
     button {
-        @apply rounded-full;
-    }
-
-    button:focus {
-        @apply outline-none;
+        @apply rounded-full focus:outline-none;
     }
 </style>

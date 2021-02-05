@@ -1,5 +1,5 @@
 <template>
-    <div class="root h-full"></div>
+    <div class="root"></div>
 </template>
 
 <script lang="ts">
@@ -10,8 +10,9 @@
 </script>
 
 <style scoped>
-  .root {
-    background: yellow;
-    width: 230px;
-  }
+    .root {
+        background: yellow;
+        width: 230px;
+        @apply h-full;
+    }
 </style>

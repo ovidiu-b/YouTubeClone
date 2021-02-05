@@ -1,7 +1,7 @@
 <template>
     <div>
         <header>
-            <Toolbar class="fixed bg-white" />
+            <Toolbar class="toolbar" />
         </header>
 
         <div class="flex" style="padding-top: 55px">
@@ -29,22 +29,26 @@
     export default class App extends Vue {}
 </script>
 
-<style>
-  html {
-    font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    word-spacing: 1px;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
-    box-sizing: border-box;
-  }
+<style lang="postcss">
+    html {
+        font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        word-spacing: 1px;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        box-sizing: border-box;
+    }
 
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    margin: 0;
-  }
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    .toolbar {
+        @apply fixed bg-white;
+    }
 </style>
