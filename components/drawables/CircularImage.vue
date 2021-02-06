@@ -1,21 +1,19 @@
 <template>
-    <span :style="{ fontSize: size, color: color }" class="material-icons"> {{ name }} </span>
+    <img :src="src" :width="width" :height="height" class="rounded-full" />
 </template>
 
 <script lang="ts">
     import { Component, Vue, Prop } from "nuxt-property-decorator";
 
     @Component
-    export default class Icon extends Vue {
+    export default class CircularImage extends Vue {
         @Prop({ default: "" })
-        name!: string;
+        src!: string;
 
         @Prop({ default: "" })
-        size!: string;
+        width!: string;
 
         @Prop({ default: "" })
-        color!: string;
+        height!: string;
     }
 </script>
-
-<style scoped></style>

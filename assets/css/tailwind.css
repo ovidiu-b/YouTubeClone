@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --navigation-width: 240px;
+    --navigation-text-color-selected: #2a2a2a;
+    --navigation-text-color-unselected: #030303;
+    --navigation-icon-color-selected: red;
+    --navigation-icon-color-unselected: #606060;
+    --navigation-item-color-unselected-hover: #f2f2f2;
+    --navigation-item-color-selected-hover: #d9d9d9;
+    --navigation-item-height: 40px;
+    --navigation-scrollbar-color: #cccccc;
+
+    --toolbar-color: white;
+    --toolbar-height: 55px;
+
+    --navigation-color: white;
+    --content-color: #f9f9f9;
+
+    --text-color-gray: #606060;
+}
+
+.w-18 {
+    width: 4.5rem;
+}

@@ -1,16 +1,17 @@
 <template>
-    <div class="container">Index</div>
+    <hr />
 </template>
 
 <script lang="ts">
     import { Component, Vue } from "nuxt-property-decorator";
 
     @Component
-    export default class Index extends Vue {}
+    export default class HorizontalLineSeparator extends Vue {}
 </script>
 
 <style scoped lang="postcss">
-    .container {
-        height: 1200px;
+    hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
 </style>
