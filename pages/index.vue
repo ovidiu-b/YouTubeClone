@@ -1,5 +1,5 @@
 <template>
-    <div class="container">Index</div>
+    <div class="root">Index</div>
 </template>
 
 <script lang="ts">
@@ -10,7 +10,7 @@
 </script>
 
 <style scoped lang="postcss">
-    .container {
+    .root {
         height: 1200px;
     }
 </style>
