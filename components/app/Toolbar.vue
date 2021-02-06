@@ -8,7 +8,7 @@
 
         <div class="search">
             <div class="search-input-container">
-                <input class="search-input" type="text" placeholder="Search" />
+                <input class="search-input" type="text" placeholder="Buscar" />
 
                 <button class="search-button">
                     <Icon name="search" size="21px" color="#999a9b" class="place-self-center" />
@@ -44,9 +44,11 @@
 
 <style scoped lang="postcss">
     .root {
-        height: 55px;
+        height: var(--toolbar-height);
 
         @apply w-full flex place-content-between;
+
+        background: var(--toolbar-color);
     }
 
     .logo {
