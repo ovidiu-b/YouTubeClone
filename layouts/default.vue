@@ -1,26 +1,18 @@
 <template>
-    <!-- <div>
+    <div>
         <header>
-            <Toolbar class="fixed" />
+            <Toolbar class="fixed" style="z-index: 99" />
         </header>
 
-        <div class="flex" style="padding-top: var(--toolbar-height)">
-            <nav>
-                <Navigation class="fixed-content" style="padding-top: calc(var(--toolbar-height) + 13px)" />
-            </nav>
+        <nav class="h-full fixed flex flex-col">
+            <div style="margin-top: var(--toolbar-height)"></div>
 
-            <main class="flex-grow" style="padding-left: var(--navigation-width)">
-                <Nuxt />
-            </main>
-        </div>
-    </div> -->
+            <Navigation class="flex-grow" style="padding-top: 13px" />
+        </nav>
 
-    <div class="flex">
-        <Toolbar style="z-index: 99" class="fixed" />
-
-        <Navigation class="fixed" style="padding-top: calc(var(--toolbar-height) + 13px)" />
-
-        <Nuxt class="flex-grow: 1;" style="margin-left: var(--navigation-width); padding-top: var(--toolbar-height)" />
+        <main style="padding-top: var(--toolbar-height); padding-left: var(--navigation-width)">
+            <Nuxt />
+        </main>
     </div>
 </template>
 
@@ -55,19 +47,5 @@
     *::after {
         box-sizing: border-box;
         margin: 0;
-    }
-
-    .sticky {
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
-    }
-
-    .fixed-content {
-        top: 0;
-        bottom: 0;
-        position: fixed;
-        overflow-y: scroll;
-        overflow-x: hidden;
     }
 </style>

@@ -37,6 +37,16 @@
             :to="navigationModel.destination"
             :iconImage="navigationModel.imageSrc"
         />
+
+        <NavigationItemTitle title="LO MEJOR DE YOUTUBE" />
+
+        <NavigationItem
+            v-for="(navigationModel, index) in categoriesNavigation"
+            :key="index"
+            :title="navigationModel.title"
+            :to="navigationModel.destination"
+            :iconImage="navigationModel.imageSrc"
+        />
     </div>
 </template>
 
@@ -85,11 +95,11 @@
     }
 </script>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
     .root {
         width: var(--navigation-width);
-        @apply h-full overflow-hidden;
         background: var(--navigation-color);
+        @apply overflow-hidden;
     }
 
     .root:hover {
