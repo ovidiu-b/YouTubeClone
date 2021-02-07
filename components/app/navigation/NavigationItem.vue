@@ -1,19 +1,37 @@
 <template>
-    <NuxtLink :to="to" class="nuxt-link">
-        <div v-if="iconImage != undefined" class="flex w-18">
-            <CircularImage :src="iconImage" width="24" height="24" class="m-auto" />
+    <div>
+        <div class="root button" @click.stop="onItemClicked" v-if="to == undefined">
+            <div v-if="hasIconSlot" class="flex w-18">
+                <slot name="icon"></slot>
+            </div>
+
+            <div v-else class="flex w-18">
+                <CircularImage v-if="iconImage != undefined" :src="iconImage" width="24" height="24" class="m-auto" />
+
+                <Icon v-else class="icon-color-selected m-auto select-none" :name="icon" :size="iconSize" />
+            </div>
+
+            <span class="mt-0.5 text-sm text-selected select-none" style="word-spacing: 0px">{{ title }}</span>
         </div>
 
-        <div v-else class="flex w-18">
-            <Icon class="icon-color-selected m-auto" :name="icon" :size="iconSize" />
-        </div>
+        <NuxtLink v-else :to="to" class="root">
+            <div v-if="hasIconSlot" class="flex w-18">
+                <slot name="icon"></slot>
+            </div>
 
-        <span class="mt-0.5 text-sm text-selected">{{ title }}</span>
-    </NuxtLink>
+            <div v-else class="flex w-18">
+                <CircularImage v-if="iconImage != undefined" :src="iconImage" width="24" height="24" class="m-auto" />
+
+                <Icon v-else class="icon-color-selected m-auto" :name="icon" :size="iconSize" />
+            </div>
+
+            <span class="mt-0.5 text-sm text-selected" style="word-spacing: 0px">{{ title }}</span>
+        </NuxtLink>
+    </div>
 </template>
 
 <script lang="ts">
-    import { Component, Vue, Prop } from "nuxt-property-decorator";
+    import { Component, Vue, Prop, Emit } from "nuxt-property-decorator";
     import { Icon, CircularImage } from "../../drawables/module";
 
     @Component({
@@ -35,19 +53,30 @@
         @Prop({ default: "" })
         title!: string;
 
-        @Prop({ default: "/" })
+        @Prop({ default: undefined })
         to!: string;
+
+        get hasIconSlot(): boolean {
+            return !!this.$slots.icon;
+        }
+
+        @Emit("onItemClicked")
+        onItemClicked() {}
     }
 </script>
 
 <style scoped lang="postcss">
-    .nuxt-link {
+    .root {
         @apply flex place-items-center py-1.5;
         height: var(--navigation-item-height);
     }
 
-    .nuxt-link:hover {
+    .root:hover {
         background: var(--navigation-item-color-unselected-hover);
+    }
+
+    .button {
+        cursor: pointer;
     }
 
     .nuxt-link-exact-active:hover {
