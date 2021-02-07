@@ -1,0 +1,10 @@
+<template></template>
+
+<script lang="ts">
+    import { Component, Vue } from "nuxt-property-decorator";
+
+    @Component
+    export default class Premium extends Vue {}
+</script>
+
+<style scoped lang="postcss"></style>
