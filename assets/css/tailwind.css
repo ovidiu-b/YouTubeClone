@@ -4,14 +4,22 @@
 
 :root {
     --navigation-width: 240px;
+    --navigation-width-extended: 240px;
+    --navigation-width-collapsed: 72px;
     --navigation-text-color-selected: #2a2a2a;
+    --navigation-text-color-collapsed-selected: #cc0000;
     --navigation-text-color-unselected: #030303;
     --navigation-icon-color-selected: red;
     --navigation-icon-color-unselected: #606060;
     --navigation-item-color-unselected-hover: #f2f2f2;
     --navigation-item-color-selected-hover: #d9d9d9;
+    --navigation-item-color-selected-collapsed-hover: #f2f2f2;
     --navigation-item-height: 40px;
+    --navigation-item-height-collapsed: 75px;
     --navigation-scrollbar-color: #cccccc;
+    --navigation-padding-top: 13px;
+    --navigation-padding-top-extended: 13px;
+    --navigation-padding-top-collapsed: 6px;
 
     --toolbar-color: white;
     --toolbar-height: 55px;

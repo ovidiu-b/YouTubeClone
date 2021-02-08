@@ -1,79 +1,102 @@
 <template>
     <div class="root">
-        <NavigationItem
-            v-for="navigationModel in mainNavigation"
-            :key="navigationModel.title"
-            :title="navigationModel.title"
-            :to="navigationModel.destination"
-            :icon="navigationModel.icon"
-            :iconSize="navigationModel.iconSize"
-        />
-        <Space height="4px" />
-        <HorizontalLineSeparator />
-        <NavigationItem
-            v-for="navigationModel in historyNavigation"
-            :key="navigationModel.title"
-            :title="navigationModel.title"
-            :to="navigationModel.destination"
-            :icon="navigationModel.icon"
-            :iconSize="navigationModel.iconSize"
-        />
-        <HorizontalLineSeparator />
-        <NavigationItemLogin v-if="isUserLogged" />
-        <HorizontalLineSeparator />
-        <NavigationItemTitle title="LO MEJOR DE YOUTUBE" />
-        <NavigationItem
-            v-for="navigationModel in categoriesNavigation"
-            :key="navigationModel.title"
-            :title="navigationModel.title"
-            :to="navigationModel.destination"
-            :iconImage="navigationModel.imageSrc"
-        />
-        <HorizontalLineSeparator />
-        <NavigationItem title="Explorar canales" to="/feed/guide_builder" icon="add_circle" iconSize="24px" />
-        <HorizontalLineSeparator />
-        <NavigationItemTitle title="MÁS DE YOUTUBE" />
-        <NavigationItem title="YouTube Premium" to="/premium">
-            <template #icon>
-                <YoutubeIcon size="24px" color="var(--navigation-icon-color-unselected)" class="m-auto" />
-            </template>
-        </NavigationItem>
-        <NavigationItem title="Directo" to="/channel/streaming" icon="sensors" iconSize="28px" />
-        <HorizontalLineSeparator />
-        <NavigationItem
-            v-for="navigationModel in supportNavigation"
-            :key="navigationModel.title"
-            :title="navigationModel.title"
-            :to="navigationModel.destination"
-            :icon="navigationModel.icon"
-            :iconSize="navigationModel.iconSize"
-        />
-        <NavigationItem
-            v-for="navigationButtonModel in supportNavigationButtons"
-            :key="navigationButtonModel.title"
-            :title="navigationButtonModel.title"
-            :icon="navigationButtonModel.icon"
-            :iconSize="navigationButtonModel.iconSize"
-            @onItemClicked="navigationButtonModel.clickMethod"
-        />
-        <HorizontalLineSeparator />
-        <NavigationItemFooter />
+        <div v-if="navigationMode == navigationModeExtended">
+            <NavigationItem
+                v-for="navigationModel in mainNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :icon="navigationModel.icon"
+                :iconSize="navigationModel.iconSize"
+            />
+            <Space height="4px" />
+            <HorizontalLineSeparator />
+            <NavigationItem
+                v-for="navigationModel in historyNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :icon="navigationModel.icon"
+                :iconSize="navigationModel.iconSize"
+            />
+            <HorizontalLineSeparator />
+            <NavigationItemLogin v-if="isUserLogged" />
+            <HorizontalLineSeparator />
+            <NavigationItemTitle title="LO MEJOR DE YOUTUBE" />
+            <NavigationItem
+                v-for="navigationModel in categoriesNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :iconImage="navigationModel.imageSrc"
+            />
+            <HorizontalLineSeparator />
+            <NavigationItem title="Explorar canales" to="/feed/guide_builder" icon="add_circle" iconSize="24px" />
+            <HorizontalLineSeparator />
+            <NavigationItemTitle title="MÁS DE YOUTUBE" />
+            <NavigationItem title="YouTube Premium" to="/premium">
+                <template #icon>
+                    <YoutubeIcon size="24px" color="var(--navigation-icon-color-unselected)" class="m-auto" />
+                </template>
+            </NavigationItem>
+            <NavigationItem title="Directo" to="/channel/streaming" icon="sensors" iconSize="28px" />
+            <HorizontalLineSeparator />
+            <NavigationItem
+                v-for="navigationModel in supportNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :icon="navigationModel.icon"
+                :iconSize="navigationModel.iconSize"
+            />
+            <NavigationItem
+                v-for="navigationButtonModel in supportNavigationButtons"
+                :key="navigationButtonModel.title"
+                :title="navigationButtonModel.title"
+                :icon="navigationButtonModel.icon"
+                :iconSize="navigationButtonModel.iconSize"
+                @onItemClicked="navigationButtonModel.clickMethod"
+            />
+            <HorizontalLineSeparator />
+            <NavigationItemFooter />
+        </div>
+
+        <div v-else>
+            <NavigationItemCollapsed
+                v-for="navigationModel in mainNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :icon="navigationModel.icon"
+                :iconSize="navigationModel.iconSize"
+            />
+            <NavigationItemCollapsed
+                v-for="navigationModel in historyNavigation"
+                :key="navigationModel.title"
+                :title="navigationModel.title"
+                :to="navigationModel.destination"
+                :icon="navigationModel.icon"
+                :iconSize="navigationModel.iconSize"
+            />
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
+    import { Component, Vue, Prop } from "nuxt-property-decorator";
     import NavigationItem from "./NavigationItem.vue";
+    import NavigationItemCollapsed from "./NavigationItemCollapsed.vue";
     import NavigationItemLogin from "./NavigationItemLogin.vue";
     import NavigationItemTitle from "./NavigationItemTitle.vue";
     import NavigationItemFooter from "./NavigationItemFooter.vue";
     import { HorizontalLineSeparator, Space } from "../../decorators/module";
-    import NavigationItemModel from "./model/NavigationItemModel";
+    import { NavigationItemModel, NavigationMode } from "./data/module";
     import { YoutubeIcon } from "../../drawables/module";
 
     @Component({
         components: {
             NavigationItem,
+            NavigationItemCollapsed,
             NavigationItemLogin,
             NavigationItemTitle,
             NavigationItemFooter,
@@ -83,6 +106,11 @@
         }
     })
     export default class Navigation extends Vue {
+        readonly navigationModeExtended: NavigationMode = NavigationMode.EXTENDED;
+
+        @Prop({ default: NavigationMode.EXTENDED })
+        navigationMode!: NavigationMode;
+
         isUserLogged: boolean = true;
 
         mainNavigation: Array<NavigationItemModel> = [

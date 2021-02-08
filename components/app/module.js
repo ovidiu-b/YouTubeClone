@@ -1,4 +1,4 @@
-import { Navigation } from "./navigation/module";
+import { Navigation, NavigationMode } from "./navigation/module";
 import Toolbar from "./Toolbar";
 
-export { Navigation, Toolbar };
+export { Navigation, Toolbar, NavigationMode };
