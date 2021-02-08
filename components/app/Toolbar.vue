@@ -1,7 +1,7 @@
 <template>
     <div class="root">
         <div class="logo">
-            <IconButton name="menu" class="mx-6" />
+            <IconButton @onButtonClicked="onMenuClicked" name="menu" class="mx-6" />
             <YoutubeLogo />
             <span class="country-tag">ES</span>
         </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
+    import { Component, Vue, Emit } from "nuxt-property-decorator";
     import { YoutubeLogo, Icon } from "../drawables/module";
     import { IconButton, LoginButton } from "../buttons/module";
 
@@ -39,7 +39,10 @@
             LoginButton
         }
     })
-    export default class Toolbar extends Vue {}
+    export default class Toolbar extends Vue {
+        @Emit("onMenuClicked")
+        onMenuClicked() {}
+    }
 </script>
 
 <style scoped lang="postcss">
