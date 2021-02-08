@@ -19,6 +19,8 @@
 <script lang="ts">
     import { Component, Vue } from "nuxt-property-decorator";
     import { Navigation, Toolbar, NavigationMode } from "../components/app/module";
+    import { BreakpointUtil } from "@/utils/module";
+    import { debounce } from "debounce";
 
     @Component({
         components: {
@@ -28,14 +30,35 @@
     })
     export default class App extends Vue {
         navigationMode: NavigationMode = NavigationMode.EXTENDED;
+        navigationCollapsedByUser: boolean = false;
+
+        readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
+
+        created() {
+            if (process.browser) {
+                window.addEventListener("resize", this.debouncedOnWindowResize);
+            }
+        }
+
+        onWindowResize() {
+            if (!this.navigationCollapsedByUser) {
+                let screenWidth = window.innerWidth;
+
+                if (screenWidth < BreakpointUtil.fourColumnsNavigationExtended) {
+                    this.closeNavigationDrawer();
+                } else {
+                    this.openNavigationDrawer();
+                }
+            }
+        }
 
         toggleNavigationDrawer() {
             if (this.navigationMode == NavigationMode.EXTENDED) {
                 this.closeNavigationDrawer();
-                this.navigationMode = NavigationMode.COLLAPSED;
+                this.navigationCollapsedByUser = true;
             } else {
                 this.openNavigationDrawer();
-                this.navigationMode = NavigationMode.EXTENDED;
+                this.navigationCollapsedByUser = false;
             }
         }
 
@@ -47,6 +70,8 @@
 
             root.style.setProperty("--navigation-width", collapsedWidth);
             root.style.setProperty("--navigation-padding-top", collapsedPaddingTop);
+
+            this.navigationMode = NavigationMode.COLLAPSED;
         }
 
         openNavigationDrawer() {
@@ -57,6 +82,14 @@
 
             root.style.setProperty("--navigation-width", extendedWidth);
             root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
+
+            this.navigationMode = NavigationMode.EXTENDED;
+        }
+
+        destroyed() {
+            if (process.browser) {
+                window.removeEventListener("resize", this.debouncedOnWindowResize);
+            }
         }
     }
 </script>
