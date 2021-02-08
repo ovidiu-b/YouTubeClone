@@ -1,7 +1,7 @@
 <template>
     <div>
         <header>
-            <Toolbar class="fixed" style="z-index: 99" />
+            <Toolbar class="fixed" style="z-index: 99" @onMenuClicked="toggleNavigationDrawer" />
         </header>
 
         <nav class="h-full fixed flex flex-col">
@@ -26,7 +26,21 @@
             Toolbar
         }
     })
-    export default class App extends Vue {}
+    export default class App extends Vue {
+        isDrawerOpen: boolean = true;
+
+        toggleNavigationDrawer() {
+            if (this.isDrawerOpen) {
+                this.closeNavigationDrawer();
+            } else {
+                this.openNavigationDrawer();
+            }
+        }
+
+        closeNavigationDrawer() {}
+
+        openNavigationDrawer() {}
+    }
 </script>
 
 <style lang="postcss">

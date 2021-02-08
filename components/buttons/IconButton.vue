@@ -1,9 +1,9 @@
 <template>
-    <button :style="{ color: color }" class="material-icons">{{ name }}</button>
+    <button @click.stop="onButtonClicked" :style="{ color: color }" class="material-icons">{{ name }}</button>
 </template>
 
 <script lang="ts">
-    import { Component, Vue, Prop } from "nuxt-property-decorator";
+    import { Component, Vue, Prop, Emit } from "nuxt-property-decorator";
 
     @Component
     export default class IconButton extends Vue {
@@ -12,6 +12,9 @@
 
         @Prop({ default: "#606060" })
         color!: string;
+
+        @Emit("onButtonClicked")
+        onButtonClicked() {}
     }
 </script>
 
