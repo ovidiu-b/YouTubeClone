@@ -7,7 +7,7 @@
         <nav class="h-full fixed flex flex-col">
             <div style="margin-top: var(--toolbar-height)"></div>
 
-            <Navigation class="flex-grow" style="padding-top: 13px" />
+            <Navigation :navigationMode="navigationMode" class="flex-grow" style="padding-top: var(--navigation-padding-top)" />
         </nav>
 
         <main style="padding-top: var(--toolbar-height); padding-left: var(--navigation-width)">
@@ -18,7 +18,7 @@
 
 <script lang="ts">
     import { Component, Vue } from "nuxt-property-decorator";
-    import { Navigation, Toolbar } from "../components/app/module";
+    import { Navigation, Toolbar, NavigationMode } from "../components/app/module";
 
     @Component({
         components: {
@@ -27,19 +27,37 @@
         }
     })
     export default class App extends Vue {
-        isDrawerOpen: boolean = true;
+        navigationMode: NavigationMode = NavigationMode.EXTENDED;
 
         toggleNavigationDrawer() {
-            if (this.isDrawerOpen) {
+            if (this.navigationMode == NavigationMode.EXTENDED) {
                 this.closeNavigationDrawer();
+                this.navigationMode = NavigationMode.COLLAPSED;
             } else {
                 this.openNavigationDrawer();
+                this.navigationMode = NavigationMode.EXTENDED;
             }
         }
 
-        closeNavigationDrawer() {}
+        closeNavigationDrawer() {
+            let root = document.documentElement;
+            let computedRootStyle = getComputedStyle(root);
+            let collapsedWidth = computedRootStyle.getPropertyValue("--navigation-width-collapsed");
+            let collapsedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-collapsed");
 
-        openNavigationDrawer() {}
+            root.style.setProperty("--navigation-width", collapsedWidth);
+            root.style.setProperty("--navigation-padding-top", collapsedPaddingTop);
+        }
+
+        openNavigationDrawer() {
+            let root = document.documentElement;
+            let computedRootStyle = getComputedStyle(root);
+            let extendedWidth = computedRootStyle.getPropertyValue("--navigation-width-extended");
+            let extendedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-extended");
+
+            root.style.setProperty("--navigation-width", extendedWidth);
+            root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
+        }
     }
 </script>
 
