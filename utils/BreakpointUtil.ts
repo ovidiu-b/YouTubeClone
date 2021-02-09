@@ -1,6 +1,7 @@
 import tailwindConfig from "@/tailwind.config.js";
 
 const BreakpointUtil = {
+    twoColumnsNavigationHidden: Number(tailwindConfig.theme.screens.twoColumnsNavigationHidden.replace("px", "")),
     twoColumnsNavigationCollapsed: Number(tailwindConfig.theme.screens.twoColumnsNavigationCollapsed.replace("px", "")),
     threeColumnsNavigationCollapsed: Number(tailwindConfig.theme.screens.threeColumnsNavigationCollapsed.replace("px", "")),
     fourColumnsNavigationCollapsed: Number(tailwindConfig.theme.screens.fourColumnsNavigationCollapsed.replace("px", "")),

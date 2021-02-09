@@ -4,11 +4,13 @@ module.exports = {
     theme: {
         extend: {},
         screens: {
+            twoColumnsNavigationHidden: "530px",
             twoColumnsNavigationCollapsed: "809px",
             threeColumnsNavigationCollapsed: "889px",
             fourColumnsNavigationCollapsed: "1145px",
             fourColumnsNavigationExtended: "1330px",
-            fiveColumnsNavigationExtended: "1921px"
+            fiveColumnsNavigationExtended: "1921px",
+            sixColumnsNavigationExtended: "2290px"
         }
     },
     variants: {
