@@ -1,6 +1,7 @@
 enum NavigationModel {
     EXTENDED = 1,
-    COLLAPSED
+    COLLAPSED,
+    HIDDEN
 }
 
 export default NavigationModel;

@@ -1,21 +1,96 @@
 <template>
     <div class="root">
-        <div class="column">1</div>
-        <div class="column">2</div>
-        <div class="column">3</div>
-        <div class="column">4</div>
-        <div class="column">5</div>
-        <div class="column">6</div>
-        <div class="column">7</div>
-        <div class="column">8</div>
-        <div class="column">9</div>
-        <div class="column">10</div>
-        <div class="column">11</div>
-        <div class="column">12</div>
-        <div class="column">13</div>
-        <div class="column">14</div>
-        <div class="column">15</div>
-        <div class="column">16</div>
+        <div class="grid-layout">
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+
+            <template v-for="image in dataSampleListIndex">
+                <div :key="image">
+                    <img :src="`/sample/video_images/${image}.webp`" />
+                </div>
+            </template>
+        </div>
     </div>
 </template>
 
@@ -23,18 +98,36 @@
     import { Component, Vue } from "nuxt-property-decorator";
 
     @Component
-    export default class Index extends Vue {}
+    export default class Index extends Vue {
+        dataSampleListIndex: Number[] = [1, 2, 3, 4, 5, 6, 7];
+    }
 </script>
 
 <style scoped lang="postcss">
     .root {
-        @apply grid gap-4 grid-cols-2 
-        threeColumnsNavigationCollapsed:grid-cols-3 
-        fourColumnsNavigationCollapsed:grid-cols-4 
-        fiveColumnsNavigationExtended:grid-cols-5;
+        @apply flex justify-center;
+        margin-top: 25px;
+        margin-left: 24px;
+        margin-right: 24px;
     }
 
-    .column {
-        @apply h-64 bg-blue-700;
+    .grid-layout {
+        @apply grid grid-cols-1 gap-4 maxWidth
+        twoColumnsNavigationHidden:grid-cols-2
+        twoColumnsNavigationCollapsed:grid-cols-2
+        threeColumnsNavigationCollapsed:grid-cols-3
+        fourColumnsNavigationCollapsed:grid-cols-4
+        fiveColumnsNavigationExtended:grid-cols-5
+        sixColumnsNavigationExtended:grid-cols-6;
+    }
+
+    .maxWidth {
+        max-width: 1490px;
+    }
+
+    @media only screen and (min-width: 2290px) {
+        .maxWidth {
+            max-width: 2240px;
+        }
     }
 </style>

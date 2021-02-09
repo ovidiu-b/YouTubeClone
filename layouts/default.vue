@@ -37,32 +37,45 @@
         created() {
             if (process.browser) {
                 window.addEventListener("resize", this.debouncedOnWindowResize);
+
+                this.onWindowResize();
             }
         }
 
         onWindowResize() {
-            if (!this.navigationCollapsedByUser) {
-                let screenWidth = window.innerWidth;
+            let screenWidth = window.innerWidth;
 
-                if (screenWidth < BreakpointUtil.fourColumnsNavigationExtended) {
-                    this.closeNavigationDrawer();
+            if (!this.navigationCollapsedByUser) {
+                if (
+                    screenWidth < BreakpointUtil.fourColumnsNavigationExtended &&
+                    screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed
+                ) {
+                    this.collapseNavigationDrawer();
                 } else {
-                    this.openNavigationDrawer();
+                    this.extendNavigationDrawer();
                 }
+            } else {
+                if (screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed) {
+                    this.collapseNavigationDrawer();
+                }
+            }
+
+            if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
+                this.hideNavigationDrawer();
             }
         }
 
         toggleNavigationDrawer() {
             if (this.navigationMode == NavigationMode.EXTENDED) {
-                this.closeNavigationDrawer();
+                this.collapseNavigationDrawer();
                 this.navigationCollapsedByUser = true;
             } else {
-                this.openNavigationDrawer();
+                this.extendNavigationDrawer();
                 this.navigationCollapsedByUser = false;
             }
         }
 
-        closeNavigationDrawer() {
+        collapseNavigationDrawer() {
             let root = document.documentElement;
             let computedRootStyle = getComputedStyle(root);
             let collapsedWidth = computedRootStyle.getPropertyValue("--navigation-width-collapsed");
@@ -74,7 +87,7 @@
             this.navigationMode = NavigationMode.COLLAPSED;
         }
 
-        openNavigationDrawer() {
+        extendNavigationDrawer() {
             let root = document.documentElement;
             let computedRootStyle = getComputedStyle(root);
             let extendedWidth = computedRootStyle.getPropertyValue("--navigation-width-extended");
@@ -84,6 +97,15 @@
             root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
 
             this.navigationMode = NavigationMode.EXTENDED;
+        }
+
+        hideNavigationDrawer() {
+            let root = document.documentElement;
+
+            root.style.setProperty("--navigation-width", "0px");
+            root.style.setProperty("--navigation-padding-top", "0xp");
+
+            this.navigationMode = NavigationMode.HIDDEN;
         }
 
         destroyed() {
