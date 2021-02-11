@@ -32,7 +32,7 @@
 
 <script lang="ts">
     import { Component, Vue, Prop, Emit } from "nuxt-property-decorator";
-    import { Icon, CircularImage } from "../../drawables/module";
+    import { Icon, CircularImage } from "@/components/drawables/module";
 
     @Component({
         components: {

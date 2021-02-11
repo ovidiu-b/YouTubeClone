@@ -6,7 +6,9 @@ const BreakpointUtil = {
     threeColumnsNavigationCollapsed: Number(tailwindConfig.theme.screens.threeColumnsNavigationCollapsed.replace("px", "")),
     fourColumnsNavigationCollapsed: Number(tailwindConfig.theme.screens.fourColumnsNavigationCollapsed.replace("px", "")),
     fourColumnsNavigationExtended: Number(tailwindConfig.theme.screens.fourColumnsNavigationExtended.replace("px", "")),
-    fiveColumnsNavigationExtended: Number(tailwindConfig.theme.screens.fiveColumnsNavigationExtended.replace("px", ""))
+    fiveColumnsNavigationExtended: Number(tailwindConfig.theme.screens.fiveColumnsNavigationExtended.replace("px", "")),
+
+    maxWidthNavigationCollapsed: Number(tailwindConfig.theme.screens.maxWidthNavigationCollapsed.replace("px", ""))
 };
 
 export default BreakpointUtil;
