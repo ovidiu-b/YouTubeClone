@@ -5,6 +5,7 @@ module.exports = {
         extend: {},
         screens: {
             twoColumnsNavigationHidden: "530px",
+            toolbarHideSearch: { max: "656px" },
             twoColumnsNavigationCollapsed: "809px",
             threeColumnsNavigationCollapsed: "889px",
             fourColumnsNavigationCollapsed: "1145px",

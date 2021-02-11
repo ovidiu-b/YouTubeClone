@@ -1,8 +1,8 @@
 <template>
     <button :style="{ borderColor: color }">
-        <Icon name="account_circle" size="30px" class="-ml-1 mr-1" :color="color" />
+        <Icon name="account_circle" size="28px" class="mr-1" :color="color" />
 
-        <span :style="{ color: color }" style="font-size: 14px">INICIAR SESIÓN</span>
+        <span :style="{ color: color }" style="font-size: 14px" class="mt-0.5">INICIAR SESIÓN</span>
     </button>
 </template>
 
@@ -18,10 +18,12 @@
 
 <style scoped lang="postcss">
     button {
-        @apply flex place-items-center flex-shrink-0 focus:outline-none select-none border px-3 py-0.5;
+        @apply flex justify-center items-center flex-shrink-0 focus:outline-none select-none border;
+        height: 40px;
+        width: 157px;
     }
 
     span {
-        @apply mt-0.5 font-medium;
+        @apply font-medium;
     }
 </style>
