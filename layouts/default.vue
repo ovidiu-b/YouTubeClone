@@ -17,8 +17,8 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
-    import { Navigation, Toolbar, NavigationMode } from "../components/app/module";
+    import { Component, Vue, ProvideReactive } from "nuxt-property-decorator";
+    import { Navigation, Toolbar, NavigationMode } from "@/modules/app/module";
     import { BreakpointUtil } from "@/utils/module";
     import { debounce } from "debounce";
 
@@ -33,6 +33,9 @@
         navigationCollapsedByUser: boolean = false;
 
         readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
+
+        @ProvideReactive("navigationMode")
+        navigationModeReactive = this.navigationMode;
 
         created() {
             if (process.browser) {
@@ -85,6 +88,7 @@
             root.style.setProperty("--navigation-padding-top", collapsedPaddingTop);
 
             this.navigationMode = NavigationMode.COLLAPSED;
+            this.navigationModeReactive = NavigationMode.COLLAPSED;
         }
 
         extendNavigationDrawer() {
@@ -97,6 +101,7 @@
             root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
 
             this.navigationMode = NavigationMode.EXTENDED;
+            this.navigationModeReactive = NavigationMode.EXTENDED;
         }
 
         hideNavigationDrawer() {
@@ -106,6 +111,7 @@
             root.style.setProperty("--navigation-padding-top", "0xp");
 
             this.navigationMode = NavigationMode.HIDDEN;
+            this.navigationModeReactive = NavigationMode.HIDDEN;
         }
 
         destroyed() {

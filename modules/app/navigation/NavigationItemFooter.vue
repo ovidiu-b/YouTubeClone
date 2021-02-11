@@ -23,7 +23,7 @@
 
 <script lang="ts">
     import { Component, Vue, Emit } from "nuxt-property-decorator";
-    import { Space } from "../../decorators/module";
+    import { Space } from "@/components/decorators/module";
 
     @Component({
         components: {

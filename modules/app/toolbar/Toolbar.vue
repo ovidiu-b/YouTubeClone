@@ -35,8 +35,8 @@
 
 <script lang="ts">
     import { Component, Vue, Emit } from "nuxt-property-decorator";
-    import { YoutubeLogo, Icon } from "../drawables/module";
-    import { IconButton, LoginButton } from "../buttons/module";
+    import { YoutubeLogo, Icon } from "@/components/drawables/module";
+    import { IconButton, LoginButton } from "@/components/buttons/module";
 
     @Component({
         components: {

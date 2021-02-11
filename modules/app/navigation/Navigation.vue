@@ -89,9 +89,9 @@
     import NavigationItemLogin from "./NavigationItemLogin.vue";
     import NavigationItemTitle from "./NavigationItemTitle.vue";
     import NavigationItemFooter from "./NavigationItemFooter.vue";
-    import { HorizontalLineSeparator, Space } from "../../decorators/module";
+    import { HorizontalLineSeparator, Space } from "@/components/decorators/module";
     import { NavigationItemModel, NavigationMode } from "./data/module";
-    import { YoutubeIcon } from "../../drawables/module";
+    import { YoutubeIcon } from "@/components/drawables/module";
 
     @Component({
         components: {

@@ -1,6 +1,8 @@
 <template>
     <div class="root">
-        <div class="grid-layout">
+        <!-- <VideoPreviewItem /> -->
+
+        <div class="grid-layout" :class="{ maxWidthNormal: hasMaxWidthNormal, maxWidthLarge: hasMaxWidthLarge }">
             <template v-for="image in dataSampleListIndex">
                 <div :key="image">
                     <img :src="`/sample/video_images/${image}.webp`" />
@@ -95,11 +97,44 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
+    import { Component, Vue, InjectReactive, Watch } from "nuxt-property-decorator";
+    import { VideoPreviewItem } from "@/modules/pages/index/module";
+    import { NavigationMode } from "@/modules/app/module";
+    import { BreakpointUtil } from "@/utils/module";
 
-    @Component
+    @Component({
+        components: {
+            VideoPreviewItem
+        }
+    })
     export default class Index extends Vue {
         dataSampleListIndex: Number[] = [1, 2, 3, 4, 5, 6, 7];
+        hasMaxWidthNormal: boolean = true;
+        hasMaxWidthLarge: boolean = false;
+
+        @InjectReactive("navigationMode")
+        navigationMode!: NavigationMode;
+
+        @Watch("navigationMode")
+        onNavigationModeChange(navigationMode: NavigationMode) {
+            if (process.browser) {
+                let screenWidth = window.innerWidth;
+
+                if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
+                    this.hasMaxWidthNormal = navigationMode == NavigationMode.EXTENDED;
+                }
+            }
+        }
+
+        created() {
+            if (process.browser) {
+                let screenWidth = window.innerWidth;
+
+                if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
+                    this.hasMaxWidthNormal = this.navigationMode == NavigationMode.EXTENDED;
+                }
+            }
+        }
     }
 </script>
 
@@ -112,7 +147,7 @@
     }
 
     .grid-layout {
-        @apply grid grid-cols-1 gap-4 maxWidth
+        @apply grid grid-cols-1 gap-4
         twoColumnsNavigationHidden:grid-cols-2
         twoColumnsNavigationCollapsed:grid-cols-2
         threeColumnsNavigationCollapsed:grid-cols-3
@@ -121,13 +156,17 @@
         sixColumnsNavigationExtended:grid-cols-6;
     }
 
-    .maxWidth {
+    .maxWidthNormal {
         max-width: 1490px;
     }
 
+    .maxWidthLarge {
+        max-width: 2240px;
+    }
+
     @media only screen and (min-width: 2290px) {
-        .maxWidth {
-            max-width: 2240px;
+        .grid-layout {
+            @apply maxWidthLarge;
         }
     }
 </style>

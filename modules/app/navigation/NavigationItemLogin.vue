@@ -10,7 +10,7 @@
 
 <script lang="ts">
     import { Component, Vue } from "nuxt-property-decorator";
-    import { LoginButton } from "../../buttons/module";
+    import { LoginButton } from "@/components/buttons/module";
 
     @Component({
         components: {
