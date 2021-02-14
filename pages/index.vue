@@ -1,106 +1,19 @@
 <template>
-    <div class="root">
-        <!-- <VideoPreviewItem /> -->
-
+    <div class="index">
         <div class="grid-layout" :class="{ maxWidthNormal: hasMaxWidthNormal, maxWidthLarge: hasMaxWidthLarge }">
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
-            </template>
-
-            <template v-for="image in dataSampleListIndex">
-                <div :key="image">
-                    <img :src="`/sample/video_images/${image}.webp`" />
-                </div>
+            <template v-for="video in getVideos">
+                <VideoPreviewItem :key="video.id" :videoPreviewBO="video" />
             </template>
         </div>
     </div>
 </template>
 
-<script lang="ts">
+<script scoped lang="ts">
     import { Component, Vue, InjectReactive, Watch } from "nuxt-property-decorator";
     import { VideoPreviewItem } from "@/modules/pages/index/module";
     import { NavigationMode } from "@/modules/app/module";
     import { BreakpointUtil } from "@/utils/module";
+    import { indexStore } from "@/store";
 
     @Component({
         components: {
@@ -108,7 +21,6 @@
         }
     })
     export default class Index extends Vue {
-        dataSampleListIndex: Number[] = [1, 2, 3, 4, 5, 6, 7];
         hasMaxWidthNormal: boolean = true;
         hasMaxWidthLarge: boolean = false;
 
@@ -117,29 +29,33 @@
 
         @Watch("navigationMode")
         onNavigationModeChange(navigationMode: NavigationMode) {
-            if (process.browser) {
-                let screenWidth = window.innerWidth;
+            let screenWidth = window.innerWidth;
 
-                if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
-                    this.hasMaxWidthNormal = navigationMode == NavigationMode.EXTENDED;
-                }
+            if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
+                this.hasMaxWidthNormal = navigationMode == NavigationMode.EXTENDED;
             }
         }
 
-        created() {
-            if (process.browser) {
-                let screenWidth = window.innerWidth;
+        mounted() {
+            indexStore.loadVideos();
+        }
 
-                if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
-                    this.hasMaxWidthNormal = this.navigationMode == NavigationMode.EXTENDED;
-                }
+        get getVideos() {
+            return indexStore.videoPreviewList;
+        }
+
+        created() {
+            let screenWidth = window.innerWidth;
+
+            if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
+                this.hasMaxWidthNormal = this.navigationMode == NavigationMode.EXTENDED;
             }
         }
     }
 </script>
 
 <style scoped lang="postcss">
-    .root {
+    .index {
         @apply flex justify-center;
         margin-top: 25px;
         margin-left: 24px;
@@ -156,17 +72,17 @@
         sixColumnsNavigationExtended:grid-cols-6;
     }
 
-    .maxWidthNormal {
+    .max-width-normal {
         max-width: 1490px;
     }
 
-    .maxWidthLarge {
+    .max-width-large {
         max-width: 2240px;
     }
 
     @media only screen and (min-width: 2290px) {
         .grid-layout {
-            @apply maxWidthLarge;
+            @apply max-width-large;
         }
     }
 </style>

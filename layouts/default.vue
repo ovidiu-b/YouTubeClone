@@ -38,11 +38,9 @@
         navigationModeReactive = this.navigationMode;
 
         created() {
-            if (process.browser) {
-                window.addEventListener("resize", this.debouncedOnWindowResize);
+            window.addEventListener("resize", this.debouncedOnWindowResize);
 
-                this.onWindowResize();
-            }
+            this.onWindowResize();
         }
 
         onWindowResize() {
@@ -115,9 +113,7 @@
         }
 
         destroyed() {
-            if (process.browser) {
-                window.removeEventListener("resize", this.debouncedOnWindowResize);
-            }
+            window.removeEventListener("resize", this.debouncedOnWindowResize);
         }
     }
 </script>

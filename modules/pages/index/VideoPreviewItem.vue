@@ -1,12 +1,32 @@
 <template>
-    <div>VideoPreview</div>
+    <div class="video-preview-item">
+        <img :src="videoPreviewBO.thumbnail" />
+
+        <!-- <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" /> -->
+
+        <!-- <span>{{ videoPreviewBO.title }}</span> -->
+
+        <!-- <span>{{ videoPreviewBO.channelTitle }}</span> -->
+    </div>
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
+    import { Component, Vue, Prop } from "nuxt-property-decorator";
+    import { CircularImage } from "@/components/drawables/module";
+    import { VideoPreviewBO } from "@/model/module";
 
-    @Component
-    export default class VideoPreviewItem extends Vue {}
+    @Component({
+        components: {
+            CircularImage
+        }
+    })
+    export default class VideoPreviewItem extends Vue {
+        @Prop({ default: "" })
+        videoPreviewBO!: VideoPreviewBO;
+    }
 </script>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+    .video-preview-item {
+    }
+</style>
