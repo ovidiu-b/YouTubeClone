@@ -44,7 +44,7 @@
         }
 
         onWindowResize() {
-            let screenWidth = window.innerWidth;
+            /* let screenWidth = window.innerWidth;
 
             if (!this.navigationCollapsedByUser) {
                 if (
@@ -63,7 +63,9 @@
 
             if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
                 this.hideNavigationDrawer();
-            }
+            } */
+
+            this.collapseNavigationDrawer();
         }
 
         toggleNavigationDrawer() {

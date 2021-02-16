@@ -1,12 +1,12 @@
 <template>
     <div class="video-preview-item">
-        <img :src="videoPreviewBO.thumbnail" />
+        <img class="img" :src="videoPreviewBO.thumbnail" />
 
-        <!-- <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" /> -->
+        <!-- <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
 
-        <!-- <span>{{ videoPreviewBO.title }}</span> -->
+        <span>{{ videoPreviewBO.title }}</span>
 
-        <!-- <span>{{ videoPreviewBO.channelTitle }}</span> -->
+        <span>{{ videoPreviewBO.channelTitle }}</span>  -->
     </div>
 </template>
 
@@ -28,5 +28,13 @@
 
 <style scoped lang="postcss">
     .video-preview-item {
+        max-width: 100%;
+    }
+
+    .img {
+        width: 360px;
+        /* max-height: 100%;
+        min-width: 100%;
+        object-fit: cover; */
     }
 </style>

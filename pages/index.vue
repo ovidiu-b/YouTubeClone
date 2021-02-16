@@ -1,6 +1,19 @@
 <template>
     <div class="index">
-        <div class="grid-layout" :class="{ maxWidthNormal: hasMaxWidthNormal, maxWidthLarge: hasMaxWidthLarge }">
+        <div
+            class="grid-layout"
+            :class="{
+                maxWidthSmall: hasHasWidthSmall,
+                maxWidthNormal: hasMaxWidthNormal,
+                maxWidthLarge: hasMaxWidthLarge,
+                oneColumn: enableOneColumn,
+                twoColumns: enableTwoColumns,
+                threeColumns: enableThreeColumns,
+                fourColumns: enableFourColumns,
+                fiveColumns: enableFiveColumns,
+                sixColumns: enableSixColumns
+            }"
+        >
             <template v-for="video in getVideos">
                 <VideoPreviewItem :key="video.id" :videoPreviewBO="video" />
             </template>
@@ -14,6 +27,7 @@
     import { NavigationMode } from "@/modules/app/module";
     import { BreakpointUtil } from "@/utils/module";
     import { indexStore } from "@/store";
+    import { debounce } from "debounce";
 
     @Component({
         components: {
@@ -21,19 +35,104 @@
         }
     })
     export default class Index extends Vue {
-        hasMaxWidthNormal: boolean = true;
+        hasHasWidthSmall: boolean = false;
+        hasMaxWidthNormal: boolean = false;
         hasMaxWidthLarge: boolean = false;
+
+        enableOneColumn: boolean = false;
+        enableTwoColumns: boolean = false;
+        enableThreeColumns: boolean = false;
+        enableFourColumns: boolean = false;
+        enableFiveColumns: boolean = false;
+        enableSixColumns: boolean = false;
 
         @InjectReactive("navigationMode")
         navigationMode!: NavigationMode;
 
+        readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
+
         @Watch("navigationMode")
         onNavigationModeChange(navigationMode: NavigationMode) {
+            //let screenWidth = window.innerWidth;
+
+            this.setColumns();
+
+            /* if (screenWidth < BreakpointUtil.maxWidthNormalNavigationCollapsed) {
+                this.hasMaxWidthNormal = navigationMode == NavigationMode.EXTENDED;
+            } */
+        }
+
+        setColumns() {
+            this.disableAllColumns();
+
             let screenWidth = window.innerWidth;
 
-            if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
-                this.hasMaxWidthNormal = navigationMode == NavigationMode.EXTENDED;
+            switch (this.navigationMode) {
+                case NavigationMode.EXTENDED: {
+                    if (screenWidth < BreakpointUtil.twoColumnsNavigationHidden) {
+                        this.enableOneColumn = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.twoColumnsNavigationHidden &&
+                        screenWidth < BreakpointUtil.threeColumnsNavigationCollapsed
+                    ) {
+                        this.enableTwoColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.threeColumnsNavigationCollapsed &&
+                        screenWidth < BreakpointUtil.fourColumnsNavigationCollapsed
+                    ) {
+                        this.enableThreeColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.fourColumnsNavigationCollapsed &&
+                        screenWidth < BreakpointUtil.fiveColumnsNavigationExtended
+                    ) {
+                        this.enableFourColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.fiveColumnsNavigationExtended &&
+                        screenWidth < BreakpointUtil.sixColumnsNavigationExtended
+                    ) {
+                        this.enableFiveColumns = true;
+                    } else {
+                        this.enableSixColumns = true;
+                    }
+                    break;
+                }
+                case NavigationMode.COLLAPSED: {
+                    if (screenWidth < BreakpointUtil.twoColumnsNavigationHidden) {
+                        this.enableOneColumn = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.twoColumnsNavigationHidden &&
+                        screenWidth < BreakpointUtil.threeColumnsNavigationCollapsed
+                    ) {
+                        this.enableTwoColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.threeColumnsNavigationCollapsed &&
+                        screenWidth < BreakpointUtil.fourColumnsNavigationCollapsed
+                    ) {
+                        this.enableThreeColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.fourColumnsNavigationCollapsed &&
+                        screenWidth < BreakpointUtil.fiveColumnsNavigationCollapsed
+                    ) {
+                        this.enableFourColumns = true;
+                    } else if (
+                        screenWidth >= BreakpointUtil.fiveColumnsNavigationCollapsed &&
+                        screenWidth < BreakpointUtil.sixColumnsNavigationCollapsed
+                    ) {
+                        this.enableFiveColumns = true;
+                    } else {
+                        this.enableSixColumns = true;
+                    }
+                    break;
+                }
+                default: {
+                    // HIDDEN
+                    break;
+                }
             }
+        }
+
+        onWindowResize() {
+            this.setColumns();
         }
 
         mounted() {
@@ -44,12 +143,29 @@
             return indexStore.videoPreviewList;
         }
 
+        disableAllColumns() {
+            this.enableOneColumn = false;
+            this.enableTwoColumns = false;
+            this.enableThreeColumns = false;
+            this.enableFourColumns = false;
+            this.enableFiveColumns = false;
+            this.enableSixColumns = false;
+        }
+
         created() {
-            let screenWidth = window.innerWidth;
+            /* let screenWidth = window.innerWidth;
 
             if (screenWidth < BreakpointUtil.maxWidthNavigationCollapsed) {
                 this.hasMaxWidthNormal = this.navigationMode == NavigationMode.EXTENDED;
-            }
+            } */
+
+            window.addEventListener("resize", this.debouncedOnWindowResize);
+
+            this.setColumns();
+        }
+
+        destroyed() {
+            window.removeEventListener("resize", this.debouncedOnWindowResize);
         }
     }
 </script>
@@ -64,12 +180,40 @@
 
     .grid-layout {
         @apply grid grid-cols-1 gap-4
-        twoColumnsNavigationHidden:grid-cols-2
+        /* twoColumnsNavigationHidden:grid-cols-2
         twoColumnsNavigationCollapsed:grid-cols-2
         threeColumnsNavigationCollapsed:grid-cols-3
         fourColumnsNavigationCollapsed:grid-cols-4
         fiveColumnsNavigationExtended:grid-cols-5
-        sixColumnsNavigationExtended:grid-cols-6;
+        sixColumnsNavigationExtended:grid-cols-6; */;
+    }
+
+    .oneColumn {
+        @apply grid-cols-1;
+    }
+
+    .twoColumns {
+        @apply grid-cols-2;
+    }
+
+    .threeColumns {
+        @apply grid-cols-3;
+    }
+
+    .fourColumns {
+        @apply grid-cols-4;
+    }
+
+    .fiveColumns {
+        @apply grid-cols-5;
+    }
+
+    .sixColumns {
+        @apply grid-cols-6;
+    }
+
+    .max-width-small {
+        max-width: 656px;
     }
 
     .max-width-normal {
@@ -80,9 +224,21 @@
         max-width: 2240px;
     }
 
+    /* @media only screen and (max-width: 888px) {
+        .grid-layout {
+            @apply max-width-small;
+        }
+    }
+
+    @media only screen and (min-width: 889px) {
+        .grid-layout {
+            @apply max-width-normal;
+        }
+    }
+
     @media only screen and (min-width: 2290px) {
         .grid-layout {
             @apply max-width-large;
         }
-    }
+    } */
 </style>

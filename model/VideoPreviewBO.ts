@@ -1,5 +1,3 @@
-import { stringify } from "postcss";
-
 export default class VideoPreviewBO {
     constructor(
         id: string,

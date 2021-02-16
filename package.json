@@ -16,6 +16,7 @@
         "@nuxtjs/proxy": "^2.1.0",
         "core-js": "^3.8.3",
         "debounce": "^1.2.0",
+        "idb-keyval": "^5.0.2",
         "nuxt": "^2.14.12",
         "nuxt-property-decorator": "^2.9.1",
         "vuex-module-decorators": "^1.0.1"
