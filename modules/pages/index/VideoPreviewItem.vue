@@ -1,12 +1,12 @@
 <template>
-    <div class="video-preview-item">
-        <img class="img" :src="videoPreviewBO.thumbnail" />
+    <div :style="{ maxWidth: width }">
+        <img class="img" :src="videoPreviewBO.thumbnail" :style="{ width: width }" />
 
-        <!-- <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
+        <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
 
         <span>{{ videoPreviewBO.title }}</span>
 
-        <span>{{ videoPreviewBO.channelTitle }}</span>  -->
+        <span>{{ videoPreviewBO.channelTitle }}</span>
     </div>
 </template>
 
@@ -23,18 +23,19 @@
     export default class VideoPreviewItem extends Vue {
         @Prop({ default: "" })
         videoPreviewBO!: VideoPreviewBO;
+
+        @Prop({ default: "" })
+        width!: string;
     }
 </script>
 
 <style scoped lang="postcss">
-    .video-preview-item {
-        max-width: 100%;
-    }
+    /* .video-preview-item {
+        max-width: var(--index-column-max-width);
+    } */
 
     .img {
-        width: 360px;
-        /* max-height: 100%;
-        min-width: 100%;
-        object-fit: cover; */
+        object-fit: cover;
+        max-height: 100%;
     }
 </style>

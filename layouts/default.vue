@@ -19,7 +19,7 @@
 <script lang="ts">
     import { Component, Vue, ProvideReactive } from "nuxt-property-decorator";
     import { Navigation, Toolbar, NavigationMode } from "@/modules/app/module";
-    import { BreakpointUtil } from "@/utils/module";
+    import { BreakpointUtil, CSSVarUtil } from "@/utils/module";
     import { debounce } from "debounce";
 
     @Component({
@@ -44,7 +44,7 @@
         }
 
         onWindowResize() {
-            /* let screenWidth = window.innerWidth;
+            let screenWidth = window.innerWidth;
 
             if (!this.navigationCollapsedByUser) {
                 if (
@@ -63,9 +63,7 @@
 
             if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
                 this.hideNavigationDrawer();
-            } */
-
-            this.collapseNavigationDrawer();
+            }
         }
 
         toggleNavigationDrawer() {
@@ -79,36 +77,24 @@
         }
 
         collapseNavigationDrawer() {
-            let root = document.documentElement;
-            let computedRootStyle = getComputedStyle(root);
-            let collapsedWidth = computedRootStyle.getPropertyValue("--navigation-width-collapsed");
-            let collapsedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-collapsed");
-
-            root.style.setProperty("--navigation-width", collapsedWidth);
-            root.style.setProperty("--navigation-padding-top", collapsedPaddingTop);
+            CSSVarUtil.setNavigationWidth(CSSVarUtil.getNavigationWidthCollapsed());
+            CSSVarUtil.setNavigationPaddingTop(CSSVarUtil.getNavigationPaddingTopCollapsed());
 
             this.navigationMode = NavigationMode.COLLAPSED;
             this.navigationModeReactive = NavigationMode.COLLAPSED;
         }
 
         extendNavigationDrawer() {
-            let root = document.documentElement;
-            let computedRootStyle = getComputedStyle(root);
-            let extendedWidth = computedRootStyle.getPropertyValue("--navigation-width-extended");
-            let extendedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-extended");
-
-            root.style.setProperty("--navigation-width", extendedWidth);
-            root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
+            CSSVarUtil.setNavigationWidth(CSSVarUtil.getNavigationWidthExtended());
+            CSSVarUtil.setNavigationPaddingTop(CSSVarUtil.getNavigationPaddingTopExtended());
 
             this.navigationMode = NavigationMode.EXTENDED;
             this.navigationModeReactive = NavigationMode.EXTENDED;
         }
 
         hideNavigationDrawer() {
-            let root = document.documentElement;
-
-            root.style.setProperty("--navigation-width", "0px");
-            root.style.setProperty("--navigation-padding-top", "0xp");
+            CSSVarUtil.setNavigationWidth("0px");
+            CSSVarUtil.setNavigationPaddingTop("0px");
 
             this.navigationMode = NavigationMode.HIDDEN;
             this.navigationModeReactive = NavigationMode.HIDDEN;

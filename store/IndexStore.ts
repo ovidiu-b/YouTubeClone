@@ -4,6 +4,8 @@ import YoutubeClient, { YoutubeVideoType, VideoChannelDTO, VideoDTO, ChannelDTO 
 import { get, set } from "idb-keyval";
 
 const CACHE_LIST = "VIDEO_PREVIEW_LIST";
+const CACHE_LAST_SAVE_KEY = "INDEX_STORE_CACHE_LAST_SAVE";
+const CACHE_LIMIT_TIME = 2 * 3600; // 2 hours in seconds
 
 @Module({
     name: "IndexStore",
@@ -22,7 +24,7 @@ export default class IndexStore extends VuexModule {
     async loadVideos() {
         const value = await get(CACHE_LIST);
 
-        if (value == null || value == undefined) {
+        if (value == null || value == undefined || hasCacheTimeLimitExpired()) {
             try {
                 const searchClient = YoutubeClient.searchClientGet();
                 searchClient.setPartId().setPartSnippet().setChartMostPopular().setType(YoutubeVideoType.VIDEO).setMaxResults(50);
@@ -49,6 +51,7 @@ export default class IndexStore extends VuexModule {
 
                 this.setVideos(bo);
                 set(CACHE_LIST, bo);
+                localStorage.setItem(CACHE_LAST_SAVE_KEY, getCurrentTimeInSeconds().toString());
             } catch (error) {
                 console.error(error.message);
             }
@@ -85,6 +88,23 @@ function dtoToBo(dto: SetVideosMutationDTO): VideoPreviewBO[] {
     }
 
     return listBO;
+}
+
+function hasCacheTimeLimitExpired(): boolean {
+    const cacheLastSaveTime = localStorage.getItem(CACHE_LAST_SAVE_KEY);
+
+    if (cacheLastSaveTime == null || cacheLastSaveTime == undefined) {
+        return true;
+    } else {
+        const cacheLastSaveTimeSeconds = Number(cacheLastSaveTime);
+        const currentTimeSeconds = getCurrentTimeInSeconds();
+
+        return currentTimeSeconds - cacheLastSaveTimeSeconds >= CACHE_LIMIT_TIME;
+    }
+}
+
+function getCurrentTimeInSeconds() {
+    return Math.round(new Date().getTime() / 1000);
 }
 
 interface SetVideosMutationDTO {
