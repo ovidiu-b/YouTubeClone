@@ -2,11 +2,21 @@
     <div :style="{ maxWidth: width }">
         <img class="img" :src="videoPreviewBO.thumbnail" :style="{ width: width }" />
 
-        <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
+        <div class="flex mt-3">
+            <div style="min-width: 35px">
+                <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
+            </div>
 
-        <span>{{ videoPreviewBO.title }}</span>
+            <div class="ml-3 mr-5">
+                <p class="title-font-style">{{ videoPreviewBO.title }}</p>
 
-        <span>{{ videoPreviewBO.channelTitle }}</span>
+                <p class="subtitle-font-style mt-1.5">{{ videoPreviewBO.channelTitle }}</p>
+
+                <p class="subtitle-font-style -mt-0.5">
+                    {{ videoPreviewBO.viewCount | formatViewCount }} &bull; {{ videoPreviewBO.timeElapsed | formatTimeElapsed }}
+                </p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -35,7 +45,16 @@
     } */
 
     .img {
-        object-fit: cover;
         max-height: 100%;
+    }
+
+    .title-font-style {
+        @apply font-medium leading-5;
+    }
+
+    .subtitle-font-style {
+        @apply text-sm;
+        color: #606060;
+        word-spacing: 0;
     }
 </style>

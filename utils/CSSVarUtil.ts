@@ -46,9 +46,5 @@ export default class CSSVarUtil {
         CSSVarUtil.root.style.setProperty("--navigation-padding-top", padding);
     }
 
-    /* static setIndexColumnMaxWidth(width: string) {
-        CSSVarUtil.root.style.setProperty("--index-column-max-width", width);
-    } */
-
     /* END SETTERS */
 }
