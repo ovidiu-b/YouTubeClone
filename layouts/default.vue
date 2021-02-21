@@ -17,10 +17,11 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue, ProvideReactive } from "nuxt-property-decorator";
+    import { Component, Vue, ProvideReactive, Watch } from "nuxt-property-decorator";
     import { Navigation, Toolbar, NavigationMode } from "@/modules/app/module";
     import { BreakpointUtil, CSSVarUtil } from "@/utils/module";
     import { debounce } from "debounce";
+    import { defaultStore } from "@/store";
 
     @Component({
         components: {
@@ -37,6 +38,8 @@
         @ProvideReactive("navigationMode")
         navigationModeReactive = this.navigationMode;
 
+        isNavAlwaysHidden: boolean = false;
+
         created() {
             window.addEventListener("resize", this.debouncedOnWindowResize);
 
@@ -44,35 +47,39 @@
         }
 
         onWindowResize() {
-            let screenWidth = window.innerWidth;
+            if (!this.isNavAlwaysHidden) {
+                let screenWidth = window.innerWidth;
 
-            if (!this.navigationCollapsedByUser) {
-                if (
-                    screenWidth < BreakpointUtil.fourColumnsNavigationExtended &&
-                    screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed
-                ) {
-                    this.collapseNavigationDrawer();
+                if (!this.navigationCollapsedByUser) {
+                    if (
+                        screenWidth < BreakpointUtil.fourColumnsNavigationExtended &&
+                        screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed
+                    ) {
+                        this.collapseNavigationDrawer();
+                    } else {
+                        this.extendNavigationDrawer();
+                    }
                 } else {
-                    this.extendNavigationDrawer();
+                    if (screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed) {
+                        this.collapseNavigationDrawer();
+                    }
                 }
-            } else {
-                if (screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed) {
-                    this.collapseNavigationDrawer();
-                }
-            }
 
-            if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
-                this.hideNavigationDrawer();
+                if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
+                    this.hideNavigationDrawer();
+                }
             }
         }
 
         toggleNavigationDrawer() {
-            if (this.navigationMode == NavigationMode.EXTENDED) {
-                this.collapseNavigationDrawer();
-                this.navigationCollapsedByUser = true;
-            } else {
-                this.extendNavigationDrawer();
-                this.navigationCollapsedByUser = false;
+            if (!this.isNavAlwaysHidden) {
+                if (this.navigationMode == NavigationMode.EXTENDED) {
+                    this.collapseNavigationDrawer();
+                    this.navigationCollapsedByUser = true;
+                } else {
+                    this.extendNavigationDrawer();
+                    this.navigationCollapsedByUser = false;
+                }
             }
         }
 
@@ -98,6 +105,21 @@
 
             this.navigationMode = NavigationMode.HIDDEN;
             this.navigationModeReactive = NavigationMode.HIDDEN;
+        }
+
+        get getterIsNavAlwaysHidden() {
+            return defaultStore.navigationAlwaysHidden;
+        }
+
+        @Watch("getterIsNavAlwaysHidden")
+        watcherIsNavAlwaysHidden(newValue: boolean) {
+            this.isNavAlwaysHidden = newValue;
+
+            if (newValue) {
+                this.hideNavigationDrawer();
+            } else {
+                this.onWindowResize();
+            }
         }
 
         destroyed() {

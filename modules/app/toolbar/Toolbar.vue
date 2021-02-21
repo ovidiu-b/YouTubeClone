@@ -2,8 +2,14 @@
     <div class="root">
         <div class="logo">
             <IconButton @onButtonClicked="onMenuClicked" name="menu" class="mx-6 toolbarHideSearch:ml-4 toolbarHideSearch:mr-3" />
-            <YoutubeLogo />
-            <span class="country-tag">ES</span>
+
+            <div class="flex items-center">
+                <NuxtLink to="/">
+                    <YoutubeLogo />
+                </NuxtLink>
+
+                <span class="country-tag select-none">ES</span>
+            </div>
         </div>
 
         <div class="search-layout">
@@ -62,7 +68,7 @@
     }
 
     .logo {
-        @apply flex;
+        @apply flex self-stretch items-stretch;
     }
 
     .search-layout {

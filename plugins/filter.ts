@@ -49,82 +49,84 @@ function formatViewCount(value: string): string {
 function formatTimeElapsed(value: string): string {
     let result = value;
 
-    let diff = Date.now() - new Date(value).getTime();
-    let days = diff / day_milli;
+    if (result != undefined) {
+        let diff = Date.now() - new Date(value).getTime();
+        let days = diff / day_milli;
 
-    if (days < 1) {
-        const hours = diff / hour_milli;
+        if (days < 1) {
+            const hours = diff / hour_milli;
 
-        if (hours < 1) {
-            const minutes = diff / minute_milli;
+            if (hours < 1) {
+                const minutes = diff / minute_milli;
 
-            if (minutes < 1) {
-                // show seconds
-                const diffInSeconds = diff / second_milli;
-                result = `hace ${diffInSeconds} secundos`;
-            } else {
-                // show minutes
-                result = `hace ${minutes} minutos`;
-            }
-        } else {
-            // show hours
-            const hoursInt = hours.toString()[0];
-            let hoursLabel = "hora";
-
-            if (Number(hoursInt) > 1) {
-                hoursLabel = "horas";
-            }
-
-            result = `hace ${hoursInt} ${hoursLabel}`;
-        }
-    } else {
-        if (days < 30) {
-            if (days < 7) {
-                // Show days
-                const daysInt = days.toString()[0];
-                let daysLabel = "día";
-
-                if (Number(daysInt) > 1) {
-                    daysLabel = "días";
-                }
-
-                result = `hace ${daysInt} ${daysLabel}`;
-            } else {
-                if (days < 14) {
-                    // show 1 week
-                    result = "hace 1 semana";
-                } else if (days < 21) {
-                    // show 2 weeks
-                    result = "hace 2 semanas";
+                if (minutes < 1) {
+                    // show seconds
+                    const diffInSeconds = diff / second_milli;
+                    result = `hace ${diffInSeconds} secundos`;
                 } else {
-                    // show 3 weeks
-                    result = "hace 3 semanas";
+                    // show minutes
+                    result = `hace ${minutes} minutos`;
                 }
+            } else {
+                // show hours
+                const hoursInt = hours.toString()[0];
+                let hoursLabel = "hora";
+
+                if (Number(hoursInt) > 1) {
+                    hoursLabel = "horas";
+                }
+
+                result = `hace ${hoursInt} ${hoursLabel}`;
             }
         } else {
-            const months = diff / month_milli;
+            if (days < 30) {
+                if (days < 7) {
+                    // Show days
+                    const daysInt = days.toString()[0];
+                    let daysLabel = "día";
 
-            if (months < 12) {
-                // show months
-                const monthsInt = months.toString()[0];
-                let monthLabel = "mes";
+                    if (Number(daysInt) > 1) {
+                        daysLabel = "días";
+                    }
 
-                if (Number(monthsInt) > 1) {
-                    monthLabel = "meses";
+                    result = `hace ${daysInt} ${daysLabel}`;
+                } else {
+                    if (days < 14) {
+                        // show 1 week
+                        result = "hace 1 semana";
+                    } else if (days < 21) {
+                        // show 2 weeks
+                        result = "hace 2 semanas";
+                    } else {
+                        // show 3 weeks
+                        result = "hace 3 semanas";
+                    }
                 }
-
-                result = `hace ${monthsInt} ${monthLabel}`;
             } else {
-                // show years
-                const years = diff / year_milli;
-                const yearsInt = years.toString()[0];
-                let yearLabel = "año";
+                const months = diff / month_milli;
 
-                if (Number(yearsInt) > 1) {
-                    yearLabel = "años";
+                if (months < 12) {
+                    // show months
+                    const monthsInt = months.toString()[0];
+                    let monthLabel = "mes";
+
+                    if (Number(monthsInt) > 1) {
+                        monthLabel = "meses";
+                    }
+
+                    result = `hace ${monthsInt} ${monthLabel}`;
+                } else {
+                    // show years
+                    const years = diff / year_milli;
+                    const yearsInt = years.toString()[0];
+                    let yearLabel = "año";
+
+                    if (Number(yearsInt) > 1) {
+                        yearLabel = "años";
+                    }
+
+                    result = `hace ${yearsInt} ${yearLabel}`;
                 }
-
-                result = `hace ${yearsInt} ${yearLabel}`;
             }
         }
     }
@@ -132,5 +134,52 @@ function formatTimeElapsed(value: string): string {
     return result;
 }
 
+function formatDuration(value: string): string {
+    let result = value;
+
+    const ptIndex = value.indexOf("PT") + 1;
+
+    if (value.includes("H")) {
+        const hoursIndex = value.indexOf("H");
+        const minutesIndex = value.indexOf("M");
+        const secondsIndex = value.indexOf("S");
+
+        const hours = value.substring(ptIndex + 1, hoursIndex);
+        const minutes = value.substring(hoursIndex + 1, minutesIndex);
+        const seconds = value.substring(minutesIndex + 1, secondsIndex);
+
+        return `${hours}:${getDurationTimeFormatted(minutes)}:${getDurationTimeFormatted(seconds)}`;
+    } else if (value.includes("M")) {
+        const minutesIndex = value.indexOf("M");
+        const secondsIndex = value.indexOf("S");
+
+        const minutes = value.substring(ptIndex + 1, minutesIndex);
+        const seconds = value.substring(minutesIndex + 1, secondsIndex);
+
+        return `${minutes}:${getDurationTimeFormatted(seconds)}`;
+    } else {
+        const secondsIndex = value.indexOf("S");
+
+        const seconds = value.substring(ptIndex + 1, secondsIndex);
+
+        return `0:${getDurationTimeFormatted(seconds)}`;
+    }
+
+    return result;
+}
+
+/* START HELPERS */
+
+function getDurationTimeFormatted(value: string): string {
+    if (Number(value) < 10) {
+        return `0${value}`;
+    }
+
+    return value;
+}
+
+/* END HELPERS */
+
 Vue.filter("formatViewCount", formatViewCount);
 Vue.filter("formatTimeElapsed", formatTimeElapsed);
+Vue.filter("formatDuration", formatDuration);

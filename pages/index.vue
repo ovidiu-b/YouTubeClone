@@ -64,7 +64,7 @@
         setColumns() {
             this.disableAllColumns();
 
-            let screenWidth = window.innerWidth;
+            const screenWidth = window.innerWidth;
 
             if (screenWidth < BreakpointUtil.twoColumnsNavigationHidden) {
                 this.enableOneColumn = true;
@@ -140,9 +140,7 @@
 <style scoped lang="postcss">
     .index {
         @apply flex justify-center;
-        margin-top: 25px;
-        margin-left: 24px;
-        margin-right: 24px;
+        margin: 25px 24px;
     }
 
     .grid-layout {

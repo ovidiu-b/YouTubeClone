@@ -1,6 +1,14 @@
 <template>
     <div :style="{ maxWidth: width }">
-        <img class="img" :src="videoPreviewBO.thumbnail" :style="{ width: width }" />
+        <div class="relative">
+            <NuxtLink :to="watchVideoUrl">
+                <img class="img cursor-pointer" :src="videoPreviewBO.thumbnail" :style="{ width: width }" />
+            </NuxtLink>
+
+            <div class="absolute bottom-0 right-0 bg-black mr-1 mb-1 px-1 py-0.5 font-medium text-white text-xs">
+                {{ videoPreviewBO.duration | formatDuration }}
+            </div>
+        </div>
 
         <div class="flex mt-3">
             <div style="min-width: 35px">
@@ -8,7 +16,7 @@
             </div>
 
             <div class="ml-3 mr-5">
-                <p class="title-font-style">{{ videoPreviewBO.title }}</p>
+                <p class="title title-font-style">{{ videoPreviewBO.title }}</p>
 
                 <p class="subtitle-font-style mt-1.5">{{ videoPreviewBO.channelTitle }}</p>
 
@@ -36,20 +44,30 @@
 
         @Prop({ default: "" })
         width!: string;
+
+        watchVideoUrl: string = "";
+
+        created() {
+            this.watchVideoUrl = `/watch?v=${this.videoPreviewBO.id}`;
+        }
     }
 </script>
 
 <style scoped lang="postcss">
-    /* .video-preview-item {
-        max-width: var(--index-column-max-width);
-    } */
-
     .img {
         max-height: 100%;
     }
 
+    .title {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+    }
+
     .title-font-style {
-        @apply font-medium leading-5;
+        @apply text-sm textLarge:text-base font-medium leading-5;
     }
 
     .subtitle-font-style {

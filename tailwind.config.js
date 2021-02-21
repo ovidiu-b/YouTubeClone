@@ -23,7 +23,11 @@ module.exports = {
 
             toolbarHideSearch: { max: "656px" },
             maxWidthSmallNavigationCollapsed: "870px",
-            maxWidthNormalNavigationCollapsed: "2001px"
+            maxWidthNormalNavigationCollapsed: "2001px",
+
+            textLarge: "1634px",
+
+            twoColumnsWatchVideo: "1016px"
         }
     },
     variants: {
