@@ -58,6 +58,8 @@ export default class WatchStore extends VuexModule {
             }
         } else {
             this.setVideo(value);
+
+            this.loadVideosByCategoryId(value.categoryId);
         }
     }
 
