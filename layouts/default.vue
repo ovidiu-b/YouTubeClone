@@ -17,10 +17,11 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue, ProvideReactive } from "nuxt-property-decorator";
+    import { Component, Vue, ProvideReactive, Watch } from "nuxt-property-decorator";
     import { Navigation, Toolbar, NavigationMode } from "@/modules/app/module";
-    import { BreakpointUtil } from "@/utils/module";
+    import { BreakpointUtil, CSSVarUtil } from "@/utils/module";
     import { debounce } from "debounce";
+    import { defaultStore } from "@/store";
 
     @Component({
         components: {
@@ -37,87 +38,92 @@
         @ProvideReactive("navigationMode")
         navigationModeReactive = this.navigationMode;
 
-        created() {
-            if (process.browser) {
-                window.addEventListener("resize", this.debouncedOnWindowResize);
+        isNavAlwaysHidden: boolean = false;
 
-                this.onWindowResize();
-            }
+        created() {
+            window.addEventListener("resize", this.debouncedOnWindowResize);
+
+            this.onWindowResize();
         }
 
         onWindowResize() {
-            let screenWidth = window.innerWidth;
+            if (!this.isNavAlwaysHidden) {
+                let screenWidth = window.innerWidth;
 
-            if (!this.navigationCollapsedByUser) {
-                if (
-                    screenWidth < BreakpointUtil.fourColumnsNavigationExtended &&
-                    screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed
-                ) {
-                    this.collapseNavigationDrawer();
+                if (!this.navigationCollapsedByUser) {
+                    if (
+                        screenWidth < BreakpointUtil.fourColumnsNavigationExtended &&
+                        screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed
+                    ) {
+                        this.collapseNavigationDrawer();
+                    } else {
+                        this.extendNavigationDrawer();
+                    }
                 } else {
-                    this.extendNavigationDrawer();
+                    if (screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed) {
+                        this.collapseNavigationDrawer();
+                    }
                 }
-            } else {
-                if (screenWidth >= BreakpointUtil.twoColumnsNavigationCollapsed) {
-                    this.collapseNavigationDrawer();
-                }
-            }
 
-            if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
-                this.hideNavigationDrawer();
+                if (screenWidth < BreakpointUtil.twoColumnsNavigationCollapsed) {
+                    this.hideNavigationDrawer();
+                }
             }
         }
 
         toggleNavigationDrawer() {
-            if (this.navigationMode == NavigationMode.EXTENDED) {
-                this.collapseNavigationDrawer();
-                this.navigationCollapsedByUser = true;
-            } else {
-                this.extendNavigationDrawer();
-                this.navigationCollapsedByUser = false;
+            if (!this.isNavAlwaysHidden) {
+                if (this.navigationMode == NavigationMode.EXTENDED) {
+                    this.collapseNavigationDrawer();
+                    this.navigationCollapsedByUser = true;
+                } else {
+                    this.extendNavigationDrawer();
+                    this.navigationCollapsedByUser = false;
+                }
             }
         }
 
         collapseNavigationDrawer() {
-            let root = document.documentElement;
-            let computedRootStyle = getComputedStyle(root);
-            let collapsedWidth = computedRootStyle.getPropertyValue("--navigation-width-collapsed");
-            let collapsedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-collapsed");
-
-            root.style.setProperty("--navigation-width", collapsedWidth);
-            root.style.setProperty("--navigation-padding-top", collapsedPaddingTop);
+            CSSVarUtil.setNavigationWidth(CSSVarUtil.getNavigationWidthCollapsed());
+            CSSVarUtil.setNavigationPaddingTop(CSSVarUtil.getNavigationPaddingTopCollapsed());
 
             this.navigationMode = NavigationMode.COLLAPSED;
             this.navigationModeReactive = NavigationMode.COLLAPSED;
         }
 
         extendNavigationDrawer() {
-            let root = document.documentElement;
-            let computedRootStyle = getComputedStyle(root);
-            let extendedWidth = computedRootStyle.getPropertyValue("--navigation-width-extended");
-            let extendedPaddingTop = computedRootStyle.getPropertyValue("--navigation-padding-top-extended");
-
-            root.style.setProperty("--navigation-width", extendedWidth);
-            root.style.setProperty("--navigation-padding-top", extendedPaddingTop);
+            CSSVarUtil.setNavigationWidth(CSSVarUtil.getNavigationWidthExtended());
+            CSSVarUtil.setNavigationPaddingTop(CSSVarUtil.getNavigationPaddingTopExtended());
 
             this.navigationMode = NavigationMode.EXTENDED;
             this.navigationModeReactive = NavigationMode.EXTENDED;
         }
 
         hideNavigationDrawer() {
-            let root = document.documentElement;
-
-            root.style.setProperty("--navigation-width", "0px");
-            root.style.setProperty("--navigation-padding-top", "0xp");
+            CSSVarUtil.setNavigationWidth("0px");
+            CSSVarUtil.setNavigationPaddingTop("0px");
 
             this.navigationMode = NavigationMode.HIDDEN;
             this.navigationModeReactive = NavigationMode.HIDDEN;
         }
 
-        destroyed() {
-            if (process.browser) {
-                window.removeEventListener("resize", this.debouncedOnWindowResize);
+        get getterIsNavAlwaysHidden() {
+            return defaultStore.navigationAlwaysHidden;
+        }
+
+        @Watch("getterIsNavAlwaysHidden")
+        watcherIsNavAlwaysHidden(newValue: boolean) {
+            this.isNavAlwaysHidden = newValue;
+
+            if (newValue) {
+                this.hideNavigationDrawer();
+            } else {
+                this.onWindowResize();
             }
+        }
+
+        destroyed() {
+            window.removeEventListener("resize", this.debouncedOnWindowResize);
         }
     }
 </script>

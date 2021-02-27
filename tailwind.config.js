@@ -16,11 +16,18 @@ module.exports = {
             threeColumnsNavigationCollapsed: "889px",
             fourColumnsNavigationCollapsed: "1145px",
             fourColumnsNavigationExtended: "1330px",
+            fiveColumnsNavigationCollapsed: "1802px",
             fiveColumnsNavigationExtended: "1921px",
+            sixColumnsNavigationCollapsed: "2137px",
             sixColumnsNavigationExtended: "2290px",
 
             toolbarHideSearch: { max: "656px" },
-            maxWidthNavigationCollapsed: "2001px"
+            maxWidthSmallNavigationCollapsed: "870px",
+            maxWidthNormalNavigationCollapsed: "2001px",
+
+            textLarge: "1634px",
+
+            twoColumnsWatchVideo: "1016px"
         }
     },
     variants: {

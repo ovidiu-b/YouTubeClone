@@ -1,6 +1,11 @@
 <template>
-    <div style="width: 80px">
-        <svg viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet" focusable="false" style="pointer-events: none; display: block; width: 100%; height: 100%">
+    <div style="width: 80px" @click="onClicked">
+        <svg
+            viewBox="0 0 200 60"
+            preserveAspectRatio="xMidYMid meet"
+            focusable="false"
+            style="pointer-events: none; display: block; width: 100%; height: 100%"
+        >
             <g viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet">
                 <g>
                     <path
@@ -38,10 +43,13 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from "nuxt-property-decorator";
+    import { Component, Vue, Emit } from "nuxt-property-decorator";
 
     @Component
-    export default class YoutubeLogo extends Vue {}
+    export default class YoutubeLogo extends Vue {
+        @Emit("onClicked")
+        onClicked() {}
+    }
 </script>
 
 <style scoped></style>

@@ -29,6 +29,11 @@
 
     --text-color-gray: #606060;
     --text-color-gray-light: #909090;
+
+    --index-column-max-width: 400px;
+    --index-column-max-width-2-columns: 319px;
+    --index-column-max-width-3-columns: 319.5px;
+    --index-column-max-width-456-columns: 360px;
 }
 
 .w-18 {
