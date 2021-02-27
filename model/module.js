@@ -1,3 +1,3 @@
-import VideoPreviewBO from "./VideoPreviewBO";
+import VideoBO from "./VideoBO";
 
-export { VideoPreviewBO };
+export { VideoBO };

@@ -1,9 +1,11 @@
 import { Module, VuexModule, Mutation, Action } from "vuex-module-decorators";
-import { VideoPreviewBO } from "@/model/module";
-import YoutubeClient, { YoutubeVideoType, VideoChannelDTO, VideoDTO, ChannelDTO } from "@/google-api/youtube-api/YoutubeClient";
+import { VideoBO } from "@/model/module";
+import YoutubeClient from "@/google-api/youtube-api/YoutubeClient";
 import { get, set } from "idb-keyval";
+import { TimeUtils, CacheUtils } from "@/utils/module";
+import { VideoMapper } from "@/model/mappers/module";
 
-const CACHE_LIST = "VIDEO_PREVIEW_LIST";
+const CACHE_KEY = "VIDEO_PREVIEW_LIST";
 const CACHE_LAST_SAVE_KEY = "INDEX_STORE_CACHE_LAST_SAVE";
 const CACHE_LIMIT_TIME = 2 * 3600; // 2 hours in seconds
 
@@ -13,45 +15,36 @@ const CACHE_LIMIT_TIME = 2 * 3600; // 2 hours in seconds
     namespaced: true
 })
 export default class IndexStore extends VuexModule {
-    videoPreviewList: VideoPreviewBO[] = [];
+    videoPreviewList: VideoBO[] = [];
 
     @Mutation
-    private setVideos(listBo: VideoPreviewBO[]) {
+    private setVideos(listBo: VideoBO[]) {
         this.videoPreviewList = listBo;
     }
 
     @Action
     async loadVideos() {
-        const value = await get(CACHE_LIST);
+        const value = await get(CACHE_KEY);
 
-        if (value == null || value == undefined || hasCacheTimeLimitExpired()) {
+        if (
+            !CacheUtils.isCacheEnabled ||
+            value == null ||
+            value == undefined ||
+            CacheUtils.hasCacheTimeLimitExpired(CACHE_LAST_SAVE_KEY, CACHE_LIMIT_TIME)
+        ) {
             try {
-                const searchClient = YoutubeClient.searchClientGet();
-                searchClient.setPartId().setPartSnippet().setChartMostPopular().setType(YoutubeVideoType.VIDEO).setMaxResults(50);
-                const searchResponse = await searchClient.execute();
+                const searchResponse = await YoutubeClient.youtubeSearchGet().execute();
+                const videosResponse = await YoutubeClient.youtubeVideosGet().setVideoIds(searchResponse.videoIds).execute();
+                const channelsResponse = await YoutubeClient.youtubeChannelsGet().setChannelIds(searchResponse.channelIds).execute();
 
-                const videosClient = YoutubeClient.videosClientGet();
-                videosClient
-                    .setPartId()
-                    .setPartSnippet()
-                    .setPartStatistics()
-                    .setPartContentDetails()
-                    .setVideoIds(searchResponse.videoIds);
-                const videosResponse = await videosClient.execute();
+                const videoBoList: VideoBO[] = VideoMapper.createBoListFromVideoAndChannel(
+                    videosResponse.videos,
+                    channelsResponse.channels
+                );
 
-                const channelsClient = YoutubeClient.channelsClientGet();
-                channelsClient.setPartSnippet().setChannelIds(searchResponse.channelIds);
-                const channelsResponse = await channelsClient.execute();
-
-                const bo = dtoToBo({
-                    videoChannelIds: searchResponse.videoChannelIds,
-                    videos: videosResponse.videos,
-                    channels: channelsResponse.channels
-                });
-
-                this.setVideos(bo);
-                set(CACHE_LIST, bo);
-                localStorage.setItem(CACHE_LAST_SAVE_KEY, getCurrentTimeInSeconds().toString());
+                this.setVideos(videoBoList);
+                set(CACHE_KEY, videoBoList);
+                localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
             } catch (error) {
                 console.error(error.message);
             }
@@ -59,56 +52,4 @@ export default class IndexStore extends VuexModule {
             this.setVideos(value);
         }
     }
-}
-
-function dtoToBo(dto: SetVideosMutationDTO): VideoPreviewBO[] {
-    const listBO: VideoPreviewBO[] = [];
-
-    for (const videoChannelId of dto.videoChannelIds) {
-        const videoId = videoChannelId.videoId;
-        const channelId = videoChannelId.channelId;
-
-        const videoDTO = dto.videos.find((video) => video.id == videoId);
-        const channelDTO = dto.channels.find((channel) => channel.id == channelId);
-
-        if (videoDTO != undefined && channelDTO != undefined) {
-            listBO.push(
-                new VideoPreviewBO(
-                    videoDTO.id,
-                    videoDTO.title,
-                    videoDTO.thumbnail,
-                    videoDTO.publichedAt,
-                    videoDTO.viewCount,
-                    videoDTO.duration,
-                    channelDTO.title,
-                    channelDTO.thumbnail
-                )
-            );
-        }
-    }
-
-    return listBO;
-}
-
-function hasCacheTimeLimitExpired(): boolean {
-    const cacheLastSaveTime = localStorage.getItem(CACHE_LAST_SAVE_KEY);
-
-    if (cacheLastSaveTime == null || cacheLastSaveTime == undefined) {
-        return true;
-    } else {
-        const cacheLastSaveTimeSeconds = Number(cacheLastSaveTime);
-        const currentTimeSeconds = getCurrentTimeInSeconds();
-
-        return currentTimeSeconds - cacheLastSaveTimeSeconds >= CACHE_LIMIT_TIME;
-    }
-}
-
-function getCurrentTimeInSeconds() {
-    return Math.round(new Date().getTime() / 1000);
-}
-
-interface SetVideosMutationDTO {
-    videoChannelIds: VideoChannelDTO[];
-    videos: VideoDTO[];
-    channels: ChannelDTO[];
 }

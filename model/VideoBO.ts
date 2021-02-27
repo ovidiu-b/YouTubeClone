@@ -1,4 +1,4 @@
-export default class VideoPreviewBO {
+export default class VideoBO {
     constructor(
         id: string,
         title: string,

@@ -31,7 +31,7 @@
 <script lang="ts">
     import { Component, Vue, Prop } from "nuxt-property-decorator";
     import { CircularImage } from "@/components/drawables/module";
-    import { VideoPreviewBO } from "@/model/module";
+    import { VideoBO } from "@/model/module";
 
     @Component({
         components: {
@@ -40,7 +40,7 @@
     })
     export default class VideoPreviewItem extends Vue {
         @Prop({ default: "" })
-        videoPreviewBO!: VideoPreviewBO;
+        videoPreviewBO!: VideoBO;
 
         @Prop({ default: "" })
         width!: string;
