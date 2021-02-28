@@ -43,6 +43,8 @@ export default class WatchStore extends VuexModule {
                 const videosResponse = await YoutubeClient.youtubeVideosGet().setVideoId(videoId).execute();
                 const video = videosResponse.videos[0];
 
+                this.loadRelatedVideosByCategoryId(video.categoryId);
+
                 const channelsResponse = await YoutubeClient.youtubeChannelsGet().setChannelId(video.channelId).execute();
                 const channel = channelsResponse.channels[0];
 
@@ -51,20 +53,18 @@ export default class WatchStore extends VuexModule {
                 this.setVideo(videoBO);
                 set(CACHE_KEY, videoBO);
                 localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
-
-                this.loadVideosByCategoryId(video.categoryId);
             } catch (error) {
                 console.error(error.message);
             }
         } else {
             this.setVideo(value);
 
-            this.loadVideosByCategoryId(value.categoryId);
+            this.loadRelatedVideosByCategoryId(value.categoryId);
         }
     }
 
     @Action
-    async loadVideosByCategoryId(categoryId: string) {
+    async loadRelatedVideosByCategoryId(categoryId: string) {
         const value = await get(CACHE_KEY_RELATED_VIDEOS);
 
         if (
@@ -84,6 +84,8 @@ export default class WatchStore extends VuexModule {
 
                 set(CACHE_KEY_RELATED_VIDEOS, relatedVideosBO);
                 localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
+
+                this.setRelatedVideos(relatedVideosBO);
             } catch (error) {
                 console.error(error);
             }

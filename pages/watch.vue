@@ -1,19 +1,83 @@
 <template>
     <div class="watch">
-        <div class="iframeContainer" ref="iframeContainer">
-            <div class="watchVideoEnableMarginLeft:hidden" style="width: 24px"></div>
-            <iframe
-                width="100%"
-                height="100%"
-                :src="`https://www.youtube.com/embed/${videoId}?autoplay=1`"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-            ></iframe>
-            <div class="twoColumnsWatchVideo:hidden" style="width: 24px"></div>
+        <div class="flex flex-col">
+            <div class="iframeContainer" ref="iframeContainer">
+                <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
+                <iframe
+                    width="100%"
+                    height="100%"
+                    :src="`https://www.youtube.com/embed/${videoId}?autoplay=1`"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+                <Space class="twoColumnsWatchVideo:hidden" width="24px" />
+            </div>
+
+            <div v-if="video">
+                <div class="flex">
+                    <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
+
+                    <div class="flex flex-grow flex-col">
+                        <p class="mt-4 text-lg">{{ video.title }}</p>
+
+                        <div class="flex">
+                            <p class="subtitle-font-style mt-2.5">
+                                {{ video.viewCount | formatViewCount(true) }} &bull; {{ video.timeElapsed | formatTimeElapsed(true) }}
+                            </p>
+
+                            <div class="flex flex-grow justify-end items-end">
+                                <div class="flex items-center mt-2">
+                                    <IconButton class="mr-1.5" name="thumb_up" color="#909090" />
+
+                                    <p class="control-actions-font-style mr-5 mt-0.5">7,9 M</p>
+
+                                    <IconButton class="mr-1.5" name="thumb_down" color="#909090" />
+
+                                    <p class="control-actions-font-style mr-5 mt-0.5">236.212</p>
+
+                                    <IconButton class="mr-1.5" name="reply" size="28px" color="#909090" />
+
+                                    <p class="control-actions-font-style mr-5 mt-0.5">COMPARTIR</p>
+
+                                    <IconButton class="mr-1.5" name="playlist_add" color="#909090" />
+
+                                    <p class="control-actions-font-style mr-5 mt-0.5">GUARDAR</p>
+
+                                    <IconButton class="mr-1.5 self-end" name="more_horiz" size="26px" color="#909090" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-1">
+                            <HorizontalLineSeparator />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-description mt-2">
+                    <div class="flex">
+                        <div class="flex flex-grow">
+                            <CircularImage :src="video.channel.thumbnail" width="48px" height="48px" />
+
+                            <div class="flex flex-col justify-center ml-4">
+                                <p class="font-medium text-sm -mb-1">{{ video.channel.title }}</p>
+
+                                <p style="font-size: 0.8rem; color: var(--text-color-gray)">
+                                    {{ video.channel.subscriberCount | formatSubscribeCount }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <SubscribeButton />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="comments">
+        <div v-if="relatedVideos" class="relatedVideos">
             <template v-for="relatedVideo in relatedVideos">
                 <VideoRelatedItem class="ml-6 mb-2" :key="relatedVideo.id" :video="relatedVideo" />
             </template>
@@ -22,28 +86,45 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue, Ref } from "nuxt-property-decorator";
+    import { Component, Vue, Ref, Watch } from "nuxt-property-decorator";
     import { debounce } from "debounce";
     import { defaultStore, watchStore } from "@/store";
     import { VideoRelatedItem } from "@/modules/pages/watch/module";
     import { BreakpointUtil } from "@/utils/module";
+    import { Space } from "@/components/decorators/module";
+    import { VideoBO } from "@/model/module";
+    import { IconButton, SubscribeButton } from "@/components/buttons/module";
+    import { HorizontalLineSeparator } from "@/components/decorators/module";
+    import { CircularImage } from "@/components/drawables/module";
 
     @Component({
-        components: { VideoRelatedItem }
+        components: { VideoRelatedItem, Space, IconButton, SubscribeButton, HorizontalLineSeparator, CircularImage }
     })
-    export default class Watch extends Vue {
+    export default class WatchPage extends Vue {
         videoId: string = "";
+        video: VideoBO | null = null;
+        relatedVideos: VideoBO[] | null = null;
 
         readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
 
         @Ref("iframeContainer") readonly iframeContainer!: HTMLDivElement;
 
-        get video() {
+        get videoGetter() {
             return watchStore.videoBO;
         }
 
-        get relatedVideos() {
+        get relatedVideosGetter() {
             return watchStore.relatedVideos;
+        }
+
+        @Watch("videoGetter")
+        watchVideoGetter(newValue: VideoBO) {
+            this.video = newValue;
+        }
+
+        @Watch("relatedVideosGetter")
+        watchRelatedVideosGetter(newValue: VideoBO[]) {
+            this.relatedVideos = newValue;
         }
 
         created() {
@@ -60,26 +141,29 @@
             watchStore.loadVideoById(this.videoId);
         }
 
-        /* Cada vez que se cambie de tamaño la pantalla, tenemos que calcular las dimensiones del video, para que 
-            quede en una escla 16 / 9 
+        /* Cada vez que se cambie de tamaño la pantalla, tenemos que calcular las dimensiones del video, para que
+            quede en una escla 16 / 9
         */
         onWindowResize() {
             const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
 
             let iframeWidth = 0;
 
             if (screenWidth < BreakpointUtil.twoColumnsWatchVideo) {
                 iframeWidth = screenWidth - 20;
             } else {
-                iframeWidth = screenWidth * 0.6 + screenHeight * 0.3;
+                iframeWidth = screenWidth - 470 + 24;
             }
 
             if (iframeWidth > 1280) {
                 iframeWidth = 1280;
             }
 
-            const iframeHeigth = iframeWidth / (16 / 9);
+            let iframeHeigth = iframeWidth / (16 / 9);
+
+            if (screenWidth < 1721) {
+                iframeHeigth = iframeHeigth - 15;
+            }
 
             this.iframeContainer.style.width = `${iframeWidth}px`;
             this.iframeContainer.style.height = `${iframeHeigth}px`;
@@ -104,8 +188,20 @@
         @apply flex mx-auto twoColumnsWatchVideo:mx-0;
     }
 
-    .comments {
+    .relatedVideos {
         @apply flex flex-col;
-        width: 425px;
+        max-width: 425px;
+    }
+
+    .subtitle-font-style {
+        @apply text-sm;
+        color: var(--text-color-gray);
+        word-spacing: 0;
+    }
+
+    .control-actions-font-style {
+        @apply text-sm font-medium;
+        color: var(--text-color-gray);
+        word-spacing: 0;
     }
 </style>

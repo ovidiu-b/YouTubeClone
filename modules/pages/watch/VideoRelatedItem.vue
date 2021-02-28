@@ -1,10 +1,10 @@
 <template>
     <div class="videoRelatedItem">
-        <img width="167.5px" :src="video.thumbnail" />
+        <img width="167.5px" class="img" :src="video.thumbnail" />
 
         <div class="ml-2">
-            <p class="title title-font-style">{{ video.title }}</p>
-            <p class="subtitle-font-style mt-1">{{ video.channelTitle }}</p>
+            <p class="text-max-lines-2 title-font-style">{{ video.title }}</p>
+            <p class="subtitle-font-style mt-1 text-max-lines-1">{{ video.channelTitle }}</p>
 
             <div style="max-width: 150px">
                 <p class="subtitle-font-smal-style">
@@ -23,8 +23,6 @@
     export default class VideoRelatedItem extends Vue {
         @Prop({ default: "" })
         video!: VideoBO;
-
-        created() {}
     }
 </script>
 
@@ -33,27 +31,19 @@
         @apply flex;
     }
 
-    .title {
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        text-overflow: ellipsis;
-    }
-
     .title-font-style {
         @apply text-sm font-medium leading-4;
     }
 
     .subtitle-font-style {
         @apply text-sm;
-        color: #606060;
+        color: var(--text-color-gray);
         word-spacing: 0;
     }
 
     .subtitle-font-smal-style {
         font-size: 0.79rem;
-        color: #606060;
+        color: var(--text-color-gray);
         word-spacing: 0;
     }
 </style>

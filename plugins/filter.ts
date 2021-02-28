@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { TimeUtils } from "@/utils/module";
 
 const second_milli = 1000;
 const minute_milli = 60 * second_milli;
@@ -7,125 +8,153 @@ const day_milli = 24 * hour_milli;
 const month_milli = 30 * day_milli;
 const year_milli = 365 * day_milli;
 
-function formatViewCount(value: string): string {
+function formatViewCount(value: string, showExactly: boolean = false, kindOfValue: string = "visualizaciones"): string {
     let result = value;
 
     if (result != undefined) {
         const digits = value.length;
         const valueSplitted = value.split("");
 
-        if (digits >= 4 && digits <= 6) {
-            valueSplitted.splice(digits - 3, 0, ".");
-        }
+        if (showExactly) {
+            const viewCuntFormatted: string[] = [];
 
-        if (digits == 7) {
-            // 1.000.000
-            const secondDigit = valueSplitted[1];
+            valueSplitted.reverse().forEach((digit, index) => {
+                if (index != 0 && index % 3 == 0) {
+                    viewCuntFormatted.push(".");
+                }
 
-            if (Number(secondDigit) != 0) {
-                valueSplitted.splice(1, 0, ",");
-                valueSplitted.splice(3, 5);
-            } else {
-                valueSplitted.splice(1, 6);
-            }
-        } else if (digits == 8) {
-            // 10.000.000
-            valueSplitted.splice(2, 6);
-        } else if (digits == 9) {
-            // 100.000.000
-            valueSplitted.splice(3, 6);
-        }
+                viewCuntFormatted.push(digit);
+            });
 
-        if (digits <= 6) {
-            result = `${valueSplitted.join("")} visualizaciones`;
+            result = `${viewCuntFormatted.reverse().join("")} ${kindOfValue}`;
         } else {
-            result = `${valueSplitted.join("")} M de visualizaciones`;
+            if (digits >= 4 && digits <= 6) {
+                valueSplitted.splice(digits - 3, 0, ".");
+            }
+
+            if (digits == 7) {
+                // 1.000.000
+                const secondDigit = valueSplitted[1];
+
+                if (Number(secondDigit) != 0) {
+                    valueSplitted.splice(1, 0, ",");
+                    valueSplitted.splice(3, 5);
+                } else {
+                    valueSplitted.splice(1, 6);
+                }
+            } else if (digits == 8) {
+                // 10.000.000
+                valueSplitted.splice(2, 6);
+            } else if (digits == 9) {
+                // 100.000.000
+                valueSplitted.splice(3, 6);
+            }
+
+            if (digits <= 6) {
+                result = `${valueSplitted.join("")} ${kindOfValue}`;
+            } else {
+                result = `${valueSplitted.join("")} M de ${kindOfValue}`;
+            }
         }
     }
 
     return result;
 }
 
-function formatTimeElapsed(value: string): string {
+function formatSubscribeCount(value: string) {
+    return formatViewCount(value, false, "suscriptores");
+}
+
+function formatTimeElapsed(value: string, showDate: boolean): string {
     let result = value;
 
     if (result != undefined) {
-        let diff = Date.now() - new Date(value).getTime();
-        let days = diff / day_milli;
+        if (showDate) {
+            const videoUploadDate = new Date(value);
 
-        if (days < 1) {
-            const hours = diff / hour_milli;
+            const day = videoUploadDate.getDate();
+            const month = videoUploadDate.getUTCMonth() + 1;
+            const year = videoUploadDate.getUTCFullYear();
 
-            if (hours < 1) {
-                const minutes = diff / minute_milli;
-
-                if (minutes < 1) {
-                    // show seconds
-                    const diffInSeconds = diff / second_milli;
-                    result = `hace ${diffInSeconds} secundos`;
-                } else {
-                    // show minutes
-                    result = `hace ${minutes} minutos`;
-                }
-            } else {
-                // show hours
-                const hoursInt = hours.toString()[0];
-                let hoursLabel = "hora";
-
-                if (Number(hoursInt) > 1) {
-                    hoursLabel = "horas";
-                }
-
-                result = `hace ${hoursInt} ${hoursLabel}`;
-            }
+            result = `${day} ${TimeUtils.convertMonthNumberToString(month)} ${year}`;
         } else {
-            if (days < 30) {
-                if (days < 7) {
-                    // Show days
-                    const daysInt = days.toString()[0];
-                    let daysLabel = "día";
+            let diff = Date.now() - new Date(value).getTime();
+            let days = diff / day_milli;
 
-                    if (Number(daysInt) > 1) {
-                        daysLabel = "días";
-                    }
+            if (days < 1) {
+                const hours = diff / hour_milli;
 
-                    result = `hace ${daysInt} ${daysLabel}`;
-                } else {
-                    if (days < 14) {
-                        // show 1 week
-                        result = "hace 1 semana";
-                    } else if (days < 21) {
-                        // show 2 weeks
-                        result = "hace 2 semanas";
+                if (hours < 1) {
+                    const minutes = diff / minute_milli;
+
+                    if (minutes < 1) {
+                        // show seconds
+                        const diffInSeconds = diff / second_milli;
+                        result = `hace ${diffInSeconds} secundos`;
                     } else {
-                        // show 3 weeks
-                        result = "hace 3 semanas";
+                        // show minutes
+                        result = `hace ${minutes} minutos`;
                     }
+                } else {
+                    // show hours
+                    const hoursInt = hours.toString()[0];
+                    let hoursLabel = "hora";
+
+                    if (Number(hoursInt) > 1) {
+                        hoursLabel = "horas";
+                    }
+
+                    result = `hace ${hoursInt} ${hoursLabel}`;
                 }
             } else {
-                const months = diff / month_milli;
+                if (days < 30) {
+                    if (days < 7) {
+                        // Show days
+                        const daysInt = days.toString()[0];
+                        let daysLabel = "día";
 
-                if (months < 12) {
-                    // show months
-                    const monthsInt = months.toString()[0];
-                    let monthLabel = "mes";
+                        if (Number(daysInt) > 1) {
+                            daysLabel = "días";
+                        }
 
-                    if (Number(monthsInt) > 1) {
-                        monthLabel = "meses";
+                        result = `hace ${daysInt} ${daysLabel}`;
+                    } else {
+                        if (days < 14) {
+                            // show 1 week
+                            result = "hace 1 semana";
+                        } else if (days < 21) {
+                            // show 2 weeks
+                            result = "hace 2 semanas";
+                        } else {
+                            // show 3 weeks
+                            result = "hace 3 semanas";
+                        }
                     }
-
-                    result = `hace ${monthsInt} ${monthLabel}`;
                 } else {
-                    // show years
-                    const years = diff / year_milli;
-                    const yearsInt = years.toString()[0];
-                    let yearLabel = "año";
+                    const months = diff / month_milli;
 
-                    if (Number(yearsInt) > 1) {
-                        yearLabel = "años";
+                    if (months < 12) {
+                        // show months
+                        const monthsInt = months.toString()[0];
+                        let monthLabel = "mes";
+
+                        if (Number(monthsInt) > 1) {
+                            monthLabel = "meses";
+                        }
+
+                        result = `hace ${monthsInt} ${monthLabel}`;
+                    } else {
+                        // show years
+                        const years = diff / year_milli;
+                        const yearsInt = years.toString()[0];
+                        let yearLabel = "año";
+
+                        if (Number(yearsInt) > 1) {
+                            yearLabel = "años";
+                        }
+
+                        result = `hace ${yearsInt} ${yearLabel}`;
                     }
-
-                    result = `hace ${yearsInt} ${yearLabel}`;
                 }
             }
         }
@@ -135,8 +164,6 @@ function formatTimeElapsed(value: string): string {
 }
 
 function formatDuration(value: string): string {
-    let result = value;
-
     const ptIndex = value.indexOf("PT") + 1;
 
     if (value.includes("H")) {
@@ -164,8 +191,6 @@ function formatDuration(value: string): string {
 
         return `0:${getDurationTimeFormatted(seconds)}`;
     }
-
-    return result;
 }
 
 /* START HELPERS */
@@ -183,3 +208,4 @@ function getDurationTimeFormatted(value: string): string {
 Vue.filter("formatViewCount", formatViewCount);
 Vue.filter("formatTimeElapsed", formatTimeElapsed);
 Vue.filter("formatDuration", formatDuration);
+Vue.filter("formatSubscribeCount", formatSubscribeCount);

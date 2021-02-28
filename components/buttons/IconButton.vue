@@ -1,5 +1,5 @@
 <template>
-    <button @click="$emit('onButtonClicked')" :style="{ color: color }" class="material-icons">{{ name }}</button>
+    <button @click="$emit('onButtonClicked')" :style="{ fontSize: size, color: color }" class="material-icons">{{ name }}</button>
 </template>
 
 <script lang="ts">
@@ -9,6 +9,9 @@
     export default class IconButton extends Vue {
         @Prop({ default: "" })
         name!: string;
+
+        @Prop({ default: "" })
+        size!: string;
 
         @Prop({ default: "#606060" })
         color!: string;

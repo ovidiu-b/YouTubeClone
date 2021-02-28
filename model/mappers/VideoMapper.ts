@@ -1,5 +1,6 @@
 import { VideoDTO, ChannelDTO } from "@/google-api/youtube-api/types/dtos/module";
-import { VideoBO } from "../module";
+import { VideoBO } from "@/model/module";
+import { ChannelMapper } from "@/model/mappers/module";
 
 export default class VideoMapper {
     static createBoFromVideoAndChannel(videoDTO: VideoDTO, channelDTO: ChannelDTO): VideoBO {
@@ -10,8 +11,7 @@ export default class VideoMapper {
             videoDTO.publichedAt,
             videoDTO.viewCount,
             videoDTO.duration,
-            channelDTO.title,
-            channelDTO.thumbnail
+            ChannelMapper.dtoToBo(channelDTO)
         );
     }
 

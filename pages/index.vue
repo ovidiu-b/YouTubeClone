@@ -12,7 +12,7 @@
             }"
         >
             <template v-for="video in getVideos">
-                <VideoPreviewItem :width="columnWidth" :key="video.id" :videoPreviewBO="video" />
+                <VideoPreviewItem :width="columnWidth" :key="video.id" :video="video" />
             </template>
         </div>
     </div>

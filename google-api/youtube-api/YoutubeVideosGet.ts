@@ -28,7 +28,7 @@ export default class YoutubeVideosGet extends YoutubeClientBase {
 
     setCategoryId(categoryId: string): YoutubeVideosGet {
         this.urlParams.append("videoCategoryId", categoryId);
-        this.setChartMostPopular().setMaxResults(50);
+        this.setChartMostPopular().setMaxResults(15);
         return this;
     }
 

@@ -1,4 +1,4 @@
-import { VideoDTO } from "../types/dtos/module";
+import { VideoDTO } from "@/google-api/youtube-api/types/dtos/module";
 
 export default class VideoDTOMapper {
     static toDTO(video: any): VideoDTO {
