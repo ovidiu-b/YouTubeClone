@@ -23,18 +23,19 @@
 
                         <div class="flex">
                             <p class="subtitle-font-style mt-2.5">
-                                {{ video.viewCount | formatViewCount(true) }} &bull; {{ video.timeElapsed | formatTimeElapsed(true) }}
+                                {{ video.viewCount | formatCount(true) }} visualizaciones &bull;
+                                {{ video.timeElapsed | formatTimeElapsed(true) }}
                             </p>
 
                             <div class="flex flex-grow justify-end items-end">
                                 <div class="flex items-center mt-2">
                                     <IconButton class="mr-1.5" name="thumb_up" color="#909090" />
 
-                                    <p class="control-actions-font-style mr-5 mt-0.5">7,9 M</p>
+                                    <p class="control-actions-font-style mr-5 mt-0.5">{{ video.likeCount | formatCount }}</p>
 
                                     <IconButton class="mr-1.5" name="thumb_down" color="#909090" />
 
-                                    <p class="control-actions-font-style mr-5 mt-0.5">236.212</p>
+                                    <p class="control-actions-font-style mr-5 mt-0.5">{{ video.dislikeCount | formatCount }}</p>
 
                                     <IconButton class="mr-1.5" name="reply" size="28px" color="#909090" />
 
@@ -53,26 +54,50 @@
                             <HorizontalLineSeparator />
                         </div>
                     </div>
+
+                    <Space class="twoColumnsWatchVideo:hidden" width="24px" />
                 </div>
 
-                <div class="video-description mt-2">
-                    <div class="flex">
-                        <div class="flex flex-grow">
-                            <CircularImage :src="video.channel.thumbnail" width="48px" height="48px" />
+                <div class="flex mt-2">
+                    <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
 
-                            <div class="flex flex-col justify-center ml-4">
-                                <p class="font-medium text-sm -mb-1">{{ video.channel.title }}</p>
+                    <div>
+                        <CircularImage :src="video.channel.thumbnail" width="48px" height="48px" />
+                    </div>
 
-                                <p style="font-size: 0.8rem; color: var(--text-color-gray)">
-                                    {{ video.channel.subscriberCount | formatSubscribeCount }}
-                                </p>
+                    <div class="flex flex-col flex-grow mt-1.5 ml-4 w-0">
+                        <div class="flex">
+                            <div class="flex flex-grow">
+                                <div class="flex flex-col justify-center">
+                                    <p class="font-medium text-sm -mb-1">{{ video.channel.title }}</p>
+
+                                    <p style="font-size: 0.8rem; color: var(--text-color-gray)">
+                                        {{ video.channel.subscriberCount | formatSubscribeCount }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center">
+                                <SubscribeButton />
                             </div>
                         </div>
 
-                        <div class="flex items-center">
-                            <SubscribeButton />
-                        </div>
+                        <p class="mt-5 leading-5 tracking-tight" style="font-size: 0.905rem" v-html="videoDescriptionHtml"></p>
+
+                        <button
+                            @click="showFullDescription = !showFullDescription"
+                            class="self-start text-xs font-medium uppercase focus:outline-none py-2 mt-0.5"
+                            style="font-size: 0.82rem; color: var(--text-color-gray)"
+                        >
+                            {{ showMoreOrLessButtonText }}
+                        </button>
                     </div>
+
+                    <Space class="twoColumnsWatchVideo:hidden" width="24px" />
+                </div>
+
+                <div class="mt-1">
+                    <HorizontalLineSeparator />
                 </div>
             </div>
         </div>
@@ -104,6 +129,11 @@
         videoId: string = "";
         video: VideoBO | null = null;
         relatedVideos: VideoBO[] | null = null;
+        videoDescriptionHtml: string | null = null;
+        videoDescriptionPreviewHtml: string | null = null;
+        videoDescriptionCompleteHtml: string | null = null;
+        showFullDescription: boolean = false;
+        showMoreOrLessButtonText: string = "Mostrar más";
 
         readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
 
@@ -120,11 +150,47 @@
         @Watch("videoGetter")
         watchVideoGetter(newValue: VideoBO) {
             this.video = newValue;
+
+            this.videoDescriptionCompleteHtml = this.video.description.replaceAll("\n", "<br/>");
+
+            const descriptionLines = this.videoDescriptionCompleteHtml.split("<br/>");
+
+            const firstDescriptionLine = descriptionLines[0];
+
+            let descriptionPreviewHtml = firstDescriptionLine;
+
+            let secondDescriptionLine = descriptionLines[1];
+
+            if (secondDescriptionLine != undefined) {
+                secondDescriptionLine.replace("", "<br/>");
+                descriptionPreviewHtml = `${descriptionPreviewHtml}${secondDescriptionLine}`;
+            }
+
+            let thirdDescriptionLine = descriptionLines[2];
+
+            if (thirdDescriptionLine != undefined) {
+                thirdDescriptionLine.replace("", "<br/>");
+                descriptionPreviewHtml = `${descriptionPreviewHtml}${thirdDescriptionLine}`;
+            }
+
+            this.videoDescriptionPreviewHtml = descriptionPreviewHtml;
+            this.videoDescriptionHtml = this.videoDescriptionPreviewHtml;
         }
 
         @Watch("relatedVideosGetter")
         watchRelatedVideosGetter(newValue: VideoBO[]) {
             this.relatedVideos = newValue;
+        }
+
+        @Watch("showFullDescription")
+        watchShowFullDescription(newValue: boolean) {
+            if (newValue) {
+                this.showMoreOrLessButtonText = "Mostrar menos";
+                this.videoDescriptionHtml = this.videoDescriptionCompleteHtml;
+            } else {
+                this.showMoreOrLessButtonText = "Mostrar más";
+                this.videoDescriptionHtml = this.videoDescriptionPreviewHtml;
+            }
         }
 
         created() {

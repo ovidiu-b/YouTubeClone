@@ -8,6 +8,10 @@ export default class VideoBO {
         timeElapsed: string,
         viewCount: string,
         duration: string,
+        likeCount: string,
+        dislikeCount: string,
+        commentCount: string,
+        description: string,
         channel: ChannelBO
     ) {
         this.id = id;
@@ -16,6 +20,10 @@ export default class VideoBO {
         this.timeElapsed = timeElapsed;
         this.viewCount = viewCount;
         this.duration = duration;
+        this.likeCount = likeCount;
+        this.dislikeCount = dislikeCount;
+        this.commentCount = commentCount;
+        this.description = description;
         this.channel = channel;
     }
 
@@ -25,5 +33,9 @@ export default class VideoBO {
     readonly timeElapsed: string;
     readonly viewCount: string;
     readonly duration: string;
+    readonly likeCount: string;
+    readonly dislikeCount: string;
+    readonly commentCount: string;
+    readonly description: string;
     readonly channel: ChannelBO;
 }

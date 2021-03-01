@@ -1,7 +1,7 @@
 import { TimeUtils } from "@/utils/module";
 
 export default class CacheUtils {
-    static readonly isCacheEnabled = false;
+    static readonly isCacheEnabled = true;
 
     static hasCacheTimeLimitExpired(key: string, limitTime: Number): boolean {
         const cacheLastSaveTime = localStorage.getItem(key);

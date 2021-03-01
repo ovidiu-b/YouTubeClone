@@ -7,4 +7,8 @@ export default interface VideoDTO {
     title: string;
     viewCount: string;
     categoryId: string;
+    likeCount: string;
+    dislikeCount: string;
+    commentCount: string;
+    description: string;
 }

@@ -10,7 +10,11 @@ export default class VideoDTOMapper {
             thumbnail: video.snippet.thumbnails.medium.url,
             title: video.snippet.title,
             viewCount: video.statistics.viewCount,
-            categoryId: video.snippet.categoryId
+            categoryId: video.snippet.categoryId,
+            likeCount: video.statistics.likeCount,
+            dislikeCount: video.statistics.dislikeCount,
+            commentCount: video.statistics.commentCount,
+            description: video.snippet.description
         };
     }
 }

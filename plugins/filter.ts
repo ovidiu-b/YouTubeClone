@@ -9,7 +9,21 @@ const month_milli = 30 * day_milli;
 const year_milli = 365 * day_milli;
 
 function formatViewCount(value: string, showExactly: boolean = false, kindOfValue: string = "visualizaciones"): string {
-    let result = value;
+    if (value != undefined) {
+        const count = formatCount(value, showExactly);
+
+        let result = count;
+
+        if (value.length <= 6) {
+            result = `${count} ${kindOfValue}`;
+        } else {
+            result = `${count} de ${kindOfValue}`;
+        }
+
+        return result;
+    }
+
+    /* let result = value;
 
     if (result != undefined) {
         const digits = value.length;
@@ -58,11 +72,64 @@ function formatViewCount(value: string, showExactly: boolean = false, kindOfValu
         }
     }
 
-    return result;
+    return result; */
 }
 
-function formatSubscribeCount(value: string) {
+function formatSubscribeCount(value: string): string {
     return formatViewCount(value, false, "suscriptores");
+}
+
+function formatCount(value: string, showExactly: boolean = false): string {
+    let result = value;
+
+    if (result != undefined) {
+        const digits = value.length;
+        const valueSplitted = value.split("");
+
+        if (showExactly) {
+            const viewCuntFormatted: string[] = [];
+
+            valueSplitted.reverse().forEach((digit, index) => {
+                if (index != 0 && index % 3 == 0) {
+                    viewCuntFormatted.push(".");
+                }
+
+                viewCuntFormatted.push(digit);
+            });
+
+            result = viewCuntFormatted.reverse().join("");
+        } else {
+            if (digits >= 4 && digits <= 6) {
+                valueSplitted.splice(digits - 3, 0, ".");
+            }
+
+            if (digits == 7) {
+                // 1.000.000
+                const secondDigit = valueSplitted[1];
+
+                if (Number(secondDigit) != 0) {
+                    valueSplitted.splice(1, 0, ",");
+                    valueSplitted.splice(3, 5);
+                } else {
+                    valueSplitted.splice(1, 6);
+                }
+            } else if (digits == 8) {
+                // 10.000.000
+                valueSplitted.splice(2, 6);
+            } else if (digits == 9) {
+                // 100.000.000
+                valueSplitted.splice(3, 6);
+            }
+
+            if (digits > 6) {
+                result = `${valueSplitted.join("")} M`;
+            } else {
+                result = valueSplitted.join("");
+            }
+        }
+    }
+
+    return result;
 }
 
 function formatTimeElapsed(value: string, showDate: boolean): string {
@@ -209,3 +276,4 @@ Vue.filter("formatViewCount", formatViewCount);
 Vue.filter("formatTimeElapsed", formatTimeElapsed);
 Vue.filter("formatDuration", formatDuration);
 Vue.filter("formatSubscribeCount", formatSubscribeCount);
+Vue.filter("formatCount", formatCount);

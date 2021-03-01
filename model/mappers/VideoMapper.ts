@@ -11,6 +11,10 @@ export default class VideoMapper {
             videoDTO.publichedAt,
             videoDTO.viewCount,
             videoDTO.duration,
+            videoDTO.likeCount,
+            videoDTO.dislikeCount,
+            videoDTO.commentCount,
+            videoDTO.description,
             ChannelMapper.dtoToBo(channelDTO)
         );
     }
