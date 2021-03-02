@@ -8,7 +8,7 @@ const day_milli = 24 * hour_milli;
 const month_milli = 30 * day_milli;
 const year_milli = 365 * day_milli;
 
-function formatViewCount(value: string, showExactly: boolean = false, kindOfValue: string = "visualizaciones"): string {
+function formatViewCount(value: string, showExactly: boolean = false, kindOfValue: string = "visualizaciones"): string | undefined {
     if (value != undefined) {
         const count = formatCount(value, showExactly);
 
@@ -21,6 +21,8 @@ function formatViewCount(value: string, showExactly: boolean = false, kindOfValu
         }
 
         return result;
+    } else {
+        return undefined;
     }
 
     /* let result = value;
@@ -75,11 +77,11 @@ function formatViewCount(value: string, showExactly: boolean = false, kindOfValu
     return result; */
 }
 
-function formatSubscribeCount(value: string): string {
+function formatSubscribeCount(value: string): string | undefined {
     return formatViewCount(value, false, "suscriptores");
 }
 
-function formatCount(value: string, showExactly: boolean = false): string {
+function formatCount(value: string, showExactly: boolean = false): string | undefined {
     let result = value;
 
     if (result != undefined) {
@@ -132,7 +134,7 @@ function formatCount(value: string, showExactly: boolean = false): string {
     return result;
 }
 
-function formatTimeElapsed(value: string, showDate: boolean): string {
+function formatTimeElapsed(value: string, showDate: boolean): string | undefined {
     let result = value;
 
     if (result != undefined) {

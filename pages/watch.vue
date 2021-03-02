@@ -14,90 +14,110 @@
                 <Space class="twoColumnsWatchVideo:hidden" width="24px" />
             </div>
 
-            <div v-if="video">
-                <div class="flex">
-                    <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
+            <div v-if="video" class="flex">
+                <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
 
-                    <div class="flex flex-grow flex-col">
-                        <p class="mt-4 text-lg">{{ video.title }}</p>
+                <div class="flex flex-grow flex-col">
+                    <div class="flex">
+                        <div class="flex flex-grow flex-col">
+                            <p class="mt-4 text-lg">{{ video.title }}</p>
 
-                        <div class="flex">
-                            <p class="subtitle-font-style mt-2.5">
-                                {{ video.viewCount | formatCount(true) }} visualizaciones &bull;
-                                {{ video.timeElapsed | formatTimeElapsed(true) }}
-                            </p>
+                            <div class="flex">
+                                <div class="mt-2.5 overflow-hidden" style="max-height: 30px">
+                                    <span class="subtitle-font-style word-wrap: break-word">
+                                        {{ video.viewCount | formatCount(true) }} visualizaciones
+                                    </span>
 
-                            <div class="flex flex-grow justify-end items-end">
-                                <div class="flex items-center mt-2">
-                                    <IconButton class="mr-1.5" name="thumb_up" color="#909090" />
-
-                                    <p class="control-actions-font-style mr-5 mt-0.5">{{ video.likeCount | formatCount }}</p>
-
-                                    <IconButton class="mr-1.5" name="thumb_down" color="#909090" />
-
-                                    <p class="control-actions-font-style mr-5 mt-0.5">{{ video.dislikeCount | formatCount }}</p>
-
-                                    <IconButton class="mr-1.5" name="reply" size="28px" color="#909090" />
-
-                                    <p class="control-actions-font-style mr-5 mt-0.5">COMPARTIR</p>
-
-                                    <IconButton class="mr-1.5" name="playlist_add" color="#909090" />
-
-                                    <p class="control-actions-font-style mr-5 mt-0.5">GUARDAR</p>
-
-                                    <IconButton class="mr-1.5 self-end" name="more_horiz" size="26px" color="#909090" />
+                                    <span class="inline-block subtitle-font-style pr-3">
+                                        &bull; {{ video.timeElapsed | formatTimeElapsed(true) }}
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="mt-1">
-                            <HorizontalLineSeparator />
-                        </div>
-                    </div>
+                                <div class="flex flex-grow justify-end items-end">
+                                    <div class="flex items-center mt-2">
+                                        <IconButton class="mr-1.5" name="thumb_up" color="#909090" />
 
-                    <Space class="twoColumnsWatchVideo:hidden" width="24px" />
-                </div>
+                                        <p class="control-actions-font-style mr-5 mt-0.5">{{ video.likeCount | formatCount }}</p>
 
-                <div class="flex mt-2">
-                    <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
+                                        <IconButton class="mr-1.5" name="thumb_down" color="#909090" />
 
-                    <div>
-                        <CircularImage :src="video.channel.thumbnail" width="48px" height="48px" />
-                    </div>
+                                        <p class="control-actions-font-style mr-5 mt-0.5">{{ video.dislikeCount | formatCount }}</p>
 
-                    <div class="flex flex-col flex-grow mt-1.5 ml-4 w-0">
-                        <div class="flex">
-                            <div class="flex flex-grow">
-                                <div class="flex flex-col justify-center">
-                                    <p class="font-medium text-sm -mb-1">{{ video.channel.title }}</p>
+                                        <IconButton class="mr-1.5" name="reply" size="28px" color="#909090" />
 
-                                    <p style="font-size: 0.8rem; color: var(--text-color-gray)">
-                                        {{ video.channel.subscriberCount | formatSubscribeCount }}
-                                    </p>
+                                        <p class="control-actions-font-style mr-5 mt-0.5">COMPARTIR</p>
+
+                                        <IconButton class="mr-1.5" name="playlist_add" color="#909090" />
+
+                                        <p class="control-actions-font-style mr-5 mt-0.5">GUARDAR</p>
+
+                                        <IconButton class="mr-1.5 self-end" name="more_horiz" size="26px" color="#909090" />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="flex items-center">
-                                <SubscribeButton />
+                            <div class="mt-1">
+                                <HorizontalLineSeparator />
                             </div>
                         </div>
 
-                        <p class="mt-5 leading-5 tracking-tight" style="font-size: 0.905rem" v-html="videoDescriptionHtml"></p>
+                        <Space class="twoColumnsWatchVideo:hidden" width="24px" />
+                    </div>
 
-                        <button
-                            @click="showFullDescription = !showFullDescription"
-                            class="self-start text-xs font-medium uppercase focus:outline-none py-2 mt-0.5"
-                            style="font-size: 0.82rem; color: var(--text-color-gray)"
-                        >
-                            {{ showMoreOrLessButtonText }}
+                    <div class="flex mt-2">
+                        <div>
+                            <CircularImage :src="video.channel.thumbnail" width="48px" height="48px" />
+                        </div>
+
+                        <div class="flex flex-col flex-grow mt-1.5 ml-4 w-0">
+                            <div class="flex">
+                                <div class="flex flex-grow">
+                                    <div class="flex flex-col justify-center">
+                                        <p class="font-medium text-sm -mb-1">{{ video.channel.title }}</p>
+
+                                        <p style="font-size: 0.8rem; color: var(--text-color-gray)">
+                                            {{ video.channel.subscriberCount | formatSubscribeCount }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <SubscribeButton />
+                                </div>
+                            </div>
+
+                            <div
+                                ref="descriptionContainer"
+                                class="mt-5 leading-5 overflow-hidden"
+                                style="max-width: 630px; font-size: 0.885rem; word-spacing: 0"
+                                v-html="videoDescriptionHtml"
+                                :style="{ maxHeight: descriptionHeight }"
+                            ></div>
+
+                            <button
+                                @click="showFullDescription = !showFullDescription"
+                                class="self-start text-xs font-medium uppercase focus:outline-none py-2 mt-0.5"
+                                style="font-size: 0.82rem; color: var(--text-color-gray)"
+                            >
+                                {{ showMoreOrLessButtonText }}
+                            </button>
+                        </div>
+
+                        <Space class="twoColumnsWatchVideo:hidden" width="24px" />
+                    </div>
+
+                    <div class="mb-4">
+                        <HorizontalLineSeparator />
+                    </div>
+
+                    <div class="flex mb-4 twoColumnsWatchVideoMax:hidden">
+                        <p>{{ commentCount }} comentarios</p>
+
+                        <button class="flex items-center focus:outline-none ml-8">
+                            <Icon name="sort" color="var(--text-color-gray-light)" />
+                            <span class="control-actions-font-style ml-3">Ordenar por</span>
                         </button>
                     </div>
-
-                    <Space class="twoColumnsWatchVideo:hidden" width="24px" />
-                </div>
-
-                <div class="mt-1">
-                    <HorizontalLineSeparator />
                 </div>
             </div>
         </div>
@@ -106,6 +126,17 @@
             <template v-for="relatedVideo in relatedVideos">
                 <VideoRelatedItem class="ml-6 mb-2" :key="relatedVideo.id" :video="relatedVideo" />
             </template>
+        </div>
+
+        <div class="flex my-4 twoColumnsWatchVideo:hidden">
+            <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
+
+            <p>{{ commentCount }} comentarios</p>
+
+            <button class="flex items-center focus:outline-none ml-8">
+                <Icon name="sort" color="var(--text-color-gray-light)" />
+                <span class="control-actions-font-style ml-3">Ordenar por</span>
+            </button>
         </div>
     </div>
 </template>
@@ -118,26 +149,28 @@
     import { BreakpointUtil } from "@/utils/module";
     import { Space } from "@/components/decorators/module";
     import { VideoBO } from "@/model/module";
+    import { Icon } from "@/components/drawables/module";
     import { IconButton, SubscribeButton } from "@/components/buttons/module";
     import { HorizontalLineSeparator } from "@/components/decorators/module";
     import { CircularImage } from "@/components/drawables/module";
 
     @Component({
-        components: { VideoRelatedItem, Space, IconButton, SubscribeButton, HorizontalLineSeparator, CircularImage }
+        components: { VideoRelatedItem, Space, Icon, IconButton, SubscribeButton, HorizontalLineSeparator, CircularImage }
     })
     export default class WatchPage extends Vue {
         videoId: string = "";
         video: VideoBO | null = null;
         relatedVideos: VideoBO[] | null = null;
         videoDescriptionHtml: string | null = null;
-        videoDescriptionPreviewHtml: string | null = null;
-        videoDescriptionCompleteHtml: string | null = null;
         showFullDescription: boolean = false;
         showMoreOrLessButtonText: string = "Mostrar más";
+        commentCount: string | null = null;
+        descriptionHeight: string = "60px";
 
         readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
 
         @Ref("iframeContainer") readonly iframeContainer!: HTMLDivElement;
+        @Ref("descriptionContainer") readonly descriptionContainer!: HTMLDivElement;
 
         get videoGetter() {
             return watchStore.videoBO;
@@ -151,30 +184,8 @@
         watchVideoGetter(newValue: VideoBO) {
             this.video = newValue;
 
-            this.videoDescriptionCompleteHtml = this.video.description.replaceAll("\n", "<br/>");
-
-            const descriptionLines = this.videoDescriptionCompleteHtml.split("<br/>");
-
-            const firstDescriptionLine = descriptionLines[0];
-
-            let descriptionPreviewHtml = firstDescriptionLine;
-
-            let secondDescriptionLine = descriptionLines[1];
-
-            if (secondDescriptionLine != undefined) {
-                secondDescriptionLine.replace("", "<br/>");
-                descriptionPreviewHtml = `${descriptionPreviewHtml}${secondDescriptionLine}`;
-            }
-
-            let thirdDescriptionLine = descriptionLines[2];
-
-            if (thirdDescriptionLine != undefined) {
-                thirdDescriptionLine.replace("", "<br/>");
-                descriptionPreviewHtml = `${descriptionPreviewHtml}${thirdDescriptionLine}`;
-            }
-
-            this.videoDescriptionPreviewHtml = descriptionPreviewHtml;
-            this.videoDescriptionHtml = this.videoDescriptionPreviewHtml;
+            this.videoDescriptionHtml = this.video.description.replaceAll("\n", "<br/>");
+            this.commentCount = this.video.commentCount;
         }
 
         @Watch("relatedVideosGetter")
@@ -186,10 +197,10 @@
         watchShowFullDescription(newValue: boolean) {
             if (newValue) {
                 this.showMoreOrLessButtonText = "Mostrar menos";
-                this.videoDescriptionHtml = this.videoDescriptionCompleteHtml;
+                this.descriptionHeight = "100%";
             } else {
                 this.showMoreOrLessButtonText = "Mostrar más";
-                this.videoDescriptionHtml = this.videoDescriptionPreviewHtml;
+                this.descriptionHeight = "60px";
             }
         }
 
@@ -266,7 +277,7 @@
     }
 
     .control-actions-font-style {
-        @apply text-sm font-medium;
+        @apply text-sm font-medium uppercase;
         color: var(--text-color-gray);
         word-spacing: 0;
     }
