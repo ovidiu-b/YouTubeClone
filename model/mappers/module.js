@@ -1,4 +1,5 @@
-import VideoMapper from "./VideoMapper";
-import ChannelMapper from "./ChannelMapper";
+import VideoBOMapper from "./VideoBOMapper";
+import ChannelBOMapper from "./ChannelBOMapper";
+import CommentBOMapper from "./CommentBOMapper";
 
-export { VideoMapper, ChannelMapper };
+export { VideoBOMapper, ChannelBOMapper, CommentBOMapper };

@@ -7,6 +7,11 @@ export default abstract class YoutubeClientBase {
         this.urlParams = new URLWithParams(url);
     }
 
+    setPart(key: string) {
+        this.urlParams.append("part", key);
+        return this;
+    }
+
     setPartId() {
         this.urlParams.append("part", "id");
         return this;

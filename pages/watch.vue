@@ -153,6 +153,7 @@
     import { IconButton, SubscribeButton } from "@/components/buttons/module";
     import { HorizontalLineSeparator } from "@/components/decorators/module";
     import { CircularImage } from "@/components/drawables/module";
+    import { CommentThreadOrder } from "~/google-api/youtube-api/types/enums/module";
 
     @Component({
         components: { VideoRelatedItem, Space, Icon, IconButton, SubscribeButton, HorizontalLineSeparator, CircularImage }
@@ -216,6 +217,7 @@
         mounted() {
             this.onWindowResize();
             watchStore.loadVideoById(this.videoId);
+            watchStore.loadCommentsByVideoId({ videoId: this.videoId, order: CommentThreadOrder.MOST_RELEVANT });
         }
 
         /* Cada vez que se cambie de tamaño la pantalla, tenemos que calcular las dimensiones del video, para que

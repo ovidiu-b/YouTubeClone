@@ -3,7 +3,7 @@ import { VideoBO } from "@/model/module";
 import YoutubeClient from "@/google-api/youtube-api/YoutubeClient";
 import { get, set } from "idb-keyval";
 import { TimeUtils, CacheUtils } from "@/utils/module";
-import { VideoMapper } from "@/model/mappers/module";
+import { VideoBOMapper } from "@/model/mappers/module";
 
 const CACHE_KEY = "VIDEO_PREVIEW_LIST";
 const CACHE_LAST_SAVE_KEY = "INDEX_STORE_CACHE_LAST_SAVE";
@@ -37,7 +37,7 @@ export default class IndexStore extends VuexModule {
                 const videosResponse = await YoutubeClient.youtubeVideosGet().setVideoIds(searchResponse.videoIds).execute();
                 const channelsResponse = await YoutubeClient.youtubeChannelsGet().setChannelIds(searchResponse.channelIds).execute();
 
-                const videoBoList: VideoBO[] = VideoMapper.createBoListFromVideoAndChannel(
+                const videoBoList: VideoBO[] = VideoBOMapper.createBoListFromVideoAndChannel(
                     videosResponse.videos,
                     channelsResponse.channels
                 );

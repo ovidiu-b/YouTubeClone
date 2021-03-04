@@ -1,3 +1,4 @@
 import YoutubeVideoType from "./YoutubeVideoType";
+import CommentThreadOrder from "./CommentThreadOrder";
 
-export { YoutubeVideoType };
+export { YoutubeVideoType, CommentThreadOrder };
