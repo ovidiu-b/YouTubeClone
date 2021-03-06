@@ -17,7 +17,8 @@
             <div v-if="video" class="flex">
                 <Space class="watchVideoEnableMarginLeft:hidden" width="24px" />
 
-                <div class="flex flex-grow flex-col">
+                <!-- w-0 is set so that the comments doesn't overlap this div width -->
+                <div class="flex flex-grow flex-col w-0">
                     <div class="flex">
                         <div class="flex flex-grow flex-col">
                             <p class="mt-4 text-lg">{{ video.title }}</p>
@@ -35,23 +36,28 @@
 
                                 <div class="flex flex-grow justify-end items-end">
                                     <div class="flex items-center mt-2">
-                                        <IconButton class="mr-1.5" name="thumb_up" color="#909090" />
+                                        <IconButton class="mr-1.5" name="thumb_up" color="var(--text-color-gray-light)" />
 
                                         <p class="control-actions-font-style mr-5 mt-0.5">{{ video.likeCount | formatCount }}</p>
 
-                                        <IconButton class="mr-1.5" name="thumb_down" color="#909090" />
+                                        <IconButton class="mr-1.5" name="thumb_down" color="var(--text-color-gray-light)" />
 
                                         <p class="control-actions-font-style mr-5 mt-0.5">{{ video.dislikeCount | formatCount }}</p>
 
-                                        <IconButton class="mr-1.5" name="reply" size="28px" color="#909090" />
+                                        <IconButton class="mr-1.5" name="reply" size="28px" color="var(--text-color-gray-light)" />
 
                                         <p class="control-actions-font-style mr-5 mt-0.5">COMPARTIR</p>
 
-                                        <IconButton class="mr-1.5" name="playlist_add" color="#909090" />
+                                        <IconButton class="mr-1.5" name="playlist_add" color="var(--text-color-gray-light)" />
 
                                         <p class="control-actions-font-style mr-5 mt-0.5">GUARDAR</p>
 
-                                        <IconButton class="mr-1.5 self-end" name="more_horiz" size="26px" color="#909090" />
+                                        <IconButton
+                                            class="mr-1.5 self-end"
+                                            name="more_horiz"
+                                            size="26px"
+                                            color="var(--text-color-gray-light)"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +102,7 @@
 
                             <button
                                 @click="showFullDescription = !showFullDescription"
-                                class="self-start text-xs font-medium uppercase focus:outline-none py-2 mt-0.5"
+                                class="self-start font-medium uppercase focus:outline-none py-2 mt-0.5"
                                 style="font-size: 0.82rem; color: var(--text-color-gray)"
                             >
                                 {{ showMoreOrLessButtonText }}
@@ -118,6 +124,10 @@
                             <span class="control-actions-font-style ml-3">Ordenar por</span>
                         </button>
                     </div>
+
+                    <template v-for="comment in commentsGetter">
+                        <CommentItem :comment="comment" :key="comment.id" />
+                    </template>
                 </div>
             </div>
         </div>
@@ -145,7 +155,7 @@
     import { Component, Vue, Ref, Watch } from "nuxt-property-decorator";
     import { debounce } from "debounce";
     import { defaultStore, watchStore } from "@/store";
-    import { VideoRelatedItem } from "@/modules/pages/watch/module";
+    import { VideoRelatedItem, CommentItem } from "@/modules/pages/watch/module";
     import { BreakpointUtil } from "@/utils/module";
     import { Space } from "@/components/decorators/module";
     import { VideoBO } from "@/model/module";
@@ -156,7 +166,16 @@
     import { CommentThreadOrder } from "~/google-api/youtube-api/types/enums/module";
 
     @Component({
-        components: { VideoRelatedItem, Space, Icon, IconButton, SubscribeButton, HorizontalLineSeparator, CircularImage }
+        components: {
+            VideoRelatedItem,
+            CommentItem,
+            Space,
+            Icon,
+            IconButton,
+            SubscribeButton,
+            HorizontalLineSeparator,
+            CircularImage
+        }
     })
     export default class WatchPage extends Vue {
         videoId: string = "";
@@ -170,6 +189,8 @@
 
         readonly debouncedOnWindowResize: any = debounce(this.onWindowResize, 1);
 
+        isMounted: boolean = false;
+
         @Ref("iframeContainer") readonly iframeContainer!: HTMLDivElement;
         @Ref("descriptionContainer") readonly descriptionContainer!: HTMLDivElement;
 
@@ -178,7 +199,11 @@
         }
 
         get relatedVideosGetter() {
-            return watchStore.relatedVideos;
+            return watchStore.relatedVideosBO;
+        }
+
+        get commentsGetter() {
+            return watchStore.commentsBO;
         }
 
         @Watch("videoGetter")
@@ -205,7 +230,26 @@
             }
         }
 
+        @Watch("$route", { immediate: true, deep: true })
+        onUrlChange() {
+            if (this.isMounted) {
+                this.onCreated();
+                this.onMounted();
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            }
+        }
+
         created() {
+            this.onCreated();
+        }
+
+        mounted() {
+            this.onMounted();
+            this.isMounted = true;
+        }
+
+        onCreated() {
             this.videoId = this.$route.query.v.toString();
 
             window.addEventListener("resize", this.debouncedOnWindowResize);
@@ -214,7 +258,7 @@
             defaultStore.setNavigationAlwaysHidden(true);
         }
 
-        mounted() {
+        onMounted() {
             this.onWindowResize();
             watchStore.loadVideoById(this.videoId);
             watchStore.loadCommentsByVideoId({ videoId: this.videoId, order: CommentThreadOrder.MOST_RELEVANT });
@@ -231,6 +275,7 @@
             if (screenWidth < BreakpointUtil.twoColumnsWatchVideo) {
                 iframeWidth = screenWidth - 20;
             } else {
+                /* + 24 because of the scrollbar width */
                 iframeWidth = screenWidth - 470 + 24;
             }
 
@@ -240,6 +285,7 @@
 
             let iframeHeigth = iframeWidth / (16 / 9);
 
+            /* This is for erasing the black top and bottom that appears when the screen width is less than 1721 */
             if (screenWidth < 1721) {
                 iframeHeigth = iframeHeigth - 15;
             }

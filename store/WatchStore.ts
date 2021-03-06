@@ -19,7 +19,7 @@ const CACHE_LIMIT_TIME = 0.5 * 3600; // 30 minutes in seconds
 })
 export default class WatchStore extends VuexModule {
     videoBO: VideoBO | null = null;
-    relatedVideos: VideoBO[] = [];
+    relatedVideosBO: VideoBO[] = [];
     commentsBO: CommentThreadBO[] = [];
 
     @Mutation
@@ -29,12 +29,12 @@ export default class WatchStore extends VuexModule {
 
     @Mutation
     setRelatedVideos(videoListBO: VideoBO[]) {
-        this.relatedVideos.push(...videoListBO);
+        this.relatedVideosBO = videoListBO;
     }
 
     @Mutation
     setComments(commentsBO: CommentThreadBO[]) {
-        this.commentsBO.push(...commentsBO);
+        this.commentsBO = commentsBO;
     }
 
     @Action

@@ -134,7 +134,7 @@ function formatCount(value: string, showExactly: boolean = false): string | unde
     return result;
 }
 
-function formatTimeElapsed(value: string, showDate: boolean): string | undefined {
+function formatTimeElapsed(value: string, showDate: boolean = false): string | undefined {
     let result = value;
 
     if (result != undefined) {

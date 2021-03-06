@@ -11,7 +11,7 @@ export default class CommentThreadBO extends CommentBO {
         likeCount: string,
         publishedAt: string,
         updatedAt: string,
-        totalReplyCount: string,
+        totalReplyCount: Number,
         replies: ReplyThreadBO[]
     ) {
         super(
@@ -29,6 +29,6 @@ export default class CommentThreadBO extends CommentBO {
         this.replies = replies;
     }
 
-    readonly totalReplyCount: string;
+    readonly totalReplyCount: Number;
     readonly replies: ReplyThreadBO[];
 }

@@ -1,0 +1,41 @@
+.font-size {
+    @apply text-sm;
+}
+
+.author-name {
+    @apply font-medium;
+    font-size: 0.8rem;
+}
+
+.content {
+    @apply flex flex-col ml-4;
+}
+
+.comment-text {
+    @apply font-size mt-1.5 overflow-hidden;
+}
+
+/* >>> it is a deep-selector, we need to do so because the new text html is in another DOM context
+    without >>> the class is only applied to the parent DOM, but not to the nested DOM */
+.comment-text >>> a {
+    @apply text-blue-600;
+}
+
+.like-count {
+    @apply text-xs mx-2;
+}
+
+.published-edited-comment-time {
+    @apply text-xs ml-1;
+    color: var(--text-color-gray);
+}
+
+.interaction-comment-actions {
+    @apply flex items-center mt-2.5;
+}
+
+.response-button {
+    @apply font-medium focus:outline-none ml-6;
+    font-size: 0.82rem;
+    color: var(--text-color-gray);
+}

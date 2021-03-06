@@ -15,7 +15,7 @@ export default class CommentBOMapper {
             dto.likeCount,
             dto.publishedAt,
             dto.updatedAt,
-            dto.totalReplyCount,
+            Number(dto.totalReplyCount),
             replies
         );
     }

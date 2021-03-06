@@ -1,5 +1,5 @@
 <template>
-    <span :style="{ fontSize: size, color: color }" class="material-icons"> {{ name }} </span>
+    <span :style="{ fontSize: size, color: color }" class="material-icons select-none"> {{ name }} </span>
 </template>
 
 <script lang="ts">
