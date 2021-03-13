@@ -43,7 +43,7 @@
             </div>
 
             <div v-if="thereAreReplies && showAllReplies">
-                <template v-for="reply in comment.replies">
+                <template v-for="reply in replies">
                     <ReplyItem :key="reply.id" :reply="reply" />
                 </template>
             </div>
@@ -53,9 +53,11 @@
 
 <script lang="ts">
     import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
-    import { CommentThreadBO } from "@/model/module";
+    import { CommentThreadBO, ReplyThreadBO } from "@/model/module";
     import { CircularImage, Icon } from "@/components/drawables/module";
     import { IconButton } from "@/components/buttons/module";
+    import YoutubeClient from "@/google-api/youtube-api/YoutubeClient";
+    import { ReplyBOMapper } from "@/model/mappers/module";
 
     /* Why ReplyItem is imported that way?
         See: 
@@ -68,6 +70,7 @@
     export default class CommentItem extends Vue {
         @Prop()
         readonly comment!: CommentThreadBO;
+        replies: ReplyThreadBO[] = [];
 
         showFullComment: boolean = false;
         showMoreOrLessButtonText: string = "Leer más";
@@ -98,6 +101,21 @@
         @Watch("showAllReplies")
         watchShowAllReplies(newValue: boolean) {
             if (newValue) {
+                if (this.replies.length == 0) {
+                    YoutubeClient.youtubeRepliesGet()
+                        .setParentId(this.comment.id)
+                        .execute()
+                        .then((commentsResponse) => {
+                            return commentsResponse.replies.map((dto) => {
+                                return ReplyBOMapper.dtoToBo(dto);
+                            });
+                        })
+                        .then((replies) => {
+                            this.replies = replies;
+                        })
+                        .catch((error) => console.error(error));
+                }
+
                 this.iconNameSeeReplies = this.iconNameListSeeReplies[1];
                 this.setSeeAllRepliesText();
             } else {

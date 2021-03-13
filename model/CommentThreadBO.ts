@@ -1,4 +1,4 @@
-import { CommentBO, ReplyThreadBO } from "./module";
+import { CommentBO } from "./module";
 
 export default class CommentThreadBO extends CommentBO {
     constructor(
@@ -11,8 +11,7 @@ export default class CommentThreadBO extends CommentBO {
         likeCount: string,
         publishedAt: string,
         updatedAt: string,
-        totalReplyCount: Number,
-        replies: ReplyThreadBO[]
+        totalReplyCount: Number
     ) {
         super(
             id,
@@ -26,9 +25,7 @@ export default class CommentThreadBO extends CommentBO {
             updatedAt
         );
         this.totalReplyCount = totalReplyCount;
-        this.replies = replies;
     }
 
     readonly totalReplyCount: Number;
-    readonly replies: ReplyThreadBO[];
 }
