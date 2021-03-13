@@ -47,6 +47,8 @@
                     <ReplyItem :key="reply.id" :reply="reply" />
                 </template>
             </div>
+
+            <CircularLoading v-if="showLoadingReplies" class="mt-4" />
         </div>
     </div>
 </template>
@@ -54,7 +56,7 @@
 <script lang="ts">
     import { Component, Vue, Prop, Watch } from "nuxt-property-decorator";
     import { CommentThreadBO, ReplyThreadBO } from "@/model/module";
-    import { CircularImage, Icon } from "@/components/drawables/module";
+    import { CircularImage, CircularLoading, Icon } from "@/components/drawables/module";
     import { IconButton } from "@/components/buttons/module";
     import YoutubeClient from "@/google-api/youtube-api/YoutubeClient";
     import { ReplyBOMapper } from "@/model/mappers/module";
@@ -66,11 +68,13 @@
             https://vuejs.org/v2/guide/components-edge-cases.html#Circular-References-Between-Components
     */
 
-    @Component({ components: { CircularImage, IconButton, Icon, ReplyItem: () => import("./ReplyItem") } })
+    @Component({ components: { CircularImage, CircularLoading, IconButton, Icon, ReplyItem: () => import("./ReplyItem") } })
     export default class CommentItem extends Vue {
         @Prop()
         readonly comment!: CommentThreadBO;
         replies: ReplyThreadBO[] = [];
+
+        showLoadingReplies: boolean = false;
 
         showFullComment: boolean = false;
         showMoreOrLessButtonText: string = "Leer más";
@@ -102,6 +106,8 @@
         watchShowAllReplies(newValue: boolean) {
             if (newValue) {
                 if (this.replies.length == 0) {
+                    this.showLoadingReplies = true;
+
                     YoutubeClient.youtubeRepliesGet()
                         .setParentId(this.comment.id)
                         .execute()
@@ -113,7 +119,10 @@
                         .then((replies) => {
                             this.replies = replies;
                         })
-                        .catch((error) => console.error(error));
+                        .catch((error) => console.error(error))
+                        .finally(() => {
+                            this.showLoadingReplies = false;
+                        });
                 }
 
                 this.iconNameSeeReplies = this.iconNameListSeeReplies[1];
