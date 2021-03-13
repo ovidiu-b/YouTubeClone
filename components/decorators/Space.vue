@@ -1,5 +1,5 @@
 <template>
-    <div :style="{ height: height }"></div>
+    <div :style="{ height: height, width: width }"></div>
 </template>
 
 <script lang="ts">
@@ -9,6 +9,9 @@
     export default class Space extends Vue {
         @Prop({ default: "" })
         height!: string;
+
+        @Prop({ default: "" })
+        width!: string;
     }
 </script>
 

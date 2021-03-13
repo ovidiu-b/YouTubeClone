@@ -2,26 +2,26 @@
     <div :style="{ maxWidth: width }">
         <div class="relative">
             <NuxtLink :to="watchVideoUrl">
-                <img class="img cursor-pointer" :src="videoPreviewBO.thumbnail" :style="{ width: width }" />
+                <img class="img cursor-pointer" :src="video.thumbnail" :style="{ width: width }" />
             </NuxtLink>
 
             <div class="absolute bottom-0 right-0 bg-black mr-1 mb-1 px-1 py-0.5 font-medium text-white text-xs">
-                {{ videoPreviewBO.duration | formatDuration }}
+                {{ video.duration | formatDuration }}
             </div>
         </div>
 
         <div class="flex mt-3">
             <div style="min-width: 35px">
-                <CircularImage :src="videoPreviewBO.channelThumbnail" width="35" height="35" />
+                <CircularImage :src="video.channel.thumbnail" width="35" height="35" />
             </div>
 
             <div class="ml-3 mr-5">
-                <p class="title title-font-style">{{ videoPreviewBO.title }}</p>
+                <p class="title title-font-style">{{ video.title }}</p>
 
-                <p class="subtitle-font-style mt-1.5">{{ videoPreviewBO.channelTitle }}</p>
+                <p class="subtitle-font-style mt-1.5">{{ video.channel.title }}</p>
 
                 <p class="subtitle-font-style -mt-0.5">
-                    {{ videoPreviewBO.viewCount | formatViewCount }} &bull; {{ videoPreviewBO.timeElapsed | formatTimeElapsed }}
+                    {{ video.viewCount | formatViewCount }} &bull; {{ video.timeElapsed | formatTimeElapsed }}
                 </p>
             </div>
         </div>
@@ -40,7 +40,7 @@
     })
     export default class VideoPreviewItem extends Vue {
         @Prop({ default: "" })
-        videoPreviewBO!: VideoBO;
+        video!: VideoBO;
 
         @Prop({ default: "" })
         width!: string;
@@ -48,7 +48,7 @@
         watchVideoUrl: string = "";
 
         created() {
-            this.watchVideoUrl = `/watch?v=${this.videoPreviewBO.id}`;
+            this.watchVideoUrl = `/watch?v=${this.video.id}`;
         }
     }
 </script>
@@ -72,7 +72,7 @@
 
     .subtitle-font-style {
         @apply text-sm;
-        color: #606060;
+        color: var(--text-color-gray);
         word-spacing: 0;
     }
 </style>

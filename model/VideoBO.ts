@@ -1,3 +1,5 @@
+import { ChannelBO } from "@/model/module";
+
 export default class VideoBO {
     constructor(
         id: string,
@@ -6,8 +8,11 @@ export default class VideoBO {
         timeElapsed: string,
         viewCount: string,
         duration: string,
-        channelTitle: string,
-        channelThumbnail: string
+        likeCount: string,
+        dislikeCount: string,
+        commentCount: string,
+        description: string,
+        channel: ChannelBO
     ) {
         this.id = id;
         this.title = title;
@@ -15,8 +20,11 @@ export default class VideoBO {
         this.timeElapsed = timeElapsed;
         this.viewCount = viewCount;
         this.duration = duration;
-        this.channelTitle = channelTitle;
-        this.channelThumbnail = channelThumbnail;
+        this.likeCount = likeCount;
+        this.dislikeCount = dislikeCount;
+        this.commentCount = commentCount;
+        this.description = description;
+        this.channel = channel;
     }
 
     readonly id: string;
@@ -25,6 +33,9 @@ export default class VideoBO {
     readonly timeElapsed: string;
     readonly viewCount: string;
     readonly duration: string;
-    readonly channelTitle: string;
-    readonly channelThumbnail: string;
+    readonly likeCount: string;
+    readonly dislikeCount: string;
+    readonly commentCount: string;
+    readonly description: string;
+    readonly channel: ChannelBO;
 }

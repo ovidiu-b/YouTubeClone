@@ -1,12 +1,12 @@
 import { $axios } from "@/utils/api";
 import YoutubeClientBase from "./YoutubeClientBase";
-import { ChannelDTO } from "./types/dtos/module";
 import { YoutubeChannelsGetResponse } from "./types/responses/module";
+import { ChannelDTOMapper } from "@/google-api/youtube-api/mappers/module";
 
 export default class YoutubeChannelsGet extends YoutubeClientBase {
     constructor(url: string) {
         super(url);
-        super.setPartSnippet();
+        super.setPartSnippet().setPartStatistics();
     }
 
     setChannelId(channelId: string): YoutubeChannelsGet {
@@ -26,12 +26,7 @@ export default class YoutubeChannelsGet extends YoutubeClientBase {
 
         const response: YoutubeChannelsGetResponse = {
             channels: listChannels.items.map((channel: any) => {
-                const dto: ChannelDTO = {
-                    id: channel.id,
-                    title: channel.snippet.title,
-                    thumbnail: channel.snippet.thumbnails.medium.url
-                };
-                return dto;
+                return ChannelDTOMapper.toDTO(channel);
             })
         };
 

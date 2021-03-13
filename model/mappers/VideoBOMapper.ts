@@ -1,7 +1,8 @@
 import { VideoDTO, ChannelDTO } from "@/google-api/youtube-api/types/dtos/module";
-import { VideoBO } from "../module";
+import { VideoBO } from "@/model/module";
+import { ChannelBOMapper } from "@/model/mappers/module";
 
-export default class VideoMapper {
+export default class VideoBOMapper {
     static createBoFromVideoAndChannel(videoDTO: VideoDTO, channelDTO: ChannelDTO): VideoBO {
         return new VideoBO(
             videoDTO.id,
@@ -10,8 +11,11 @@ export default class VideoMapper {
             videoDTO.publichedAt,
             videoDTO.viewCount,
             videoDTO.duration,
-            channelDTO.title,
-            channelDTO.thumbnail
+            videoDTO.likeCount,
+            videoDTO.dislikeCount,
+            videoDTO.commentCount,
+            videoDTO.description,
+            ChannelBOMapper.dtoToBo(channelDTO)
         );
     }
 
@@ -23,7 +27,7 @@ export default class VideoMapper {
                 const channelDTO = channels.find((channel) => channel.id == videoDTO.channelId);
 
                 if (channelDTO != undefined) {
-                    listBO.push(VideoMapper.createBoFromVideoAndChannel(videoDTO, channelDTO));
+                    listBO.push(VideoBOMapper.createBoFromVideoAndChannel(videoDTO, channelDTO));
                 }
             }
         }

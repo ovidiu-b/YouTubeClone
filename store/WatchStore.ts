@@ -1,13 +1,15 @@
 import { Module, VuexModule, Mutation, Action } from "vuex-module-decorators";
-import { VideoBO } from "@/model/module";
+import { CommentThreadBO, VideoBO } from "@/model/module";
 import YoutubeClient from "@/google-api/youtube-api/YoutubeClient";
 import { get, set } from "idb-keyval";
 import { TimeUtils, CacheUtils } from "@/utils/module";
-import { VideoMapper } from "@/model/mappers/module";
+import { CommentBOMapper, VideoBOMapper } from "@/model/mappers/module";
+import { CommentThreadOrder } from "~/google-api/youtube-api/types/enums/module";
 
 const CACHE_KEY = "WATCH_VIDEO";
 const CACHE_KEY_RELATED_VIDEOS = "WATCH_RELATED_VIDEOS";
 const CACHE_LAST_SAVE_KEY = "WATCH_STORE_CACHE_LAST_SAVE";
+const CACHE_KEY_COMMENTS = "CACHE_KEY_COMMENTS";
 const CACHE_LIMIT_TIME = 0.5 * 3600; // 30 minutes in seconds
 
 @Module({
@@ -17,7 +19,8 @@ const CACHE_LIMIT_TIME = 0.5 * 3600; // 30 minutes in seconds
 })
 export default class WatchStore extends VuexModule {
     videoBO: VideoBO | null = null;
-    relatedVideos: VideoBO[] = [];
+    relatedVideosBO: VideoBO[] = [];
+    commentsBO: CommentThreadBO[] = [];
 
     @Mutation
     setVideo(videoBO: VideoBO) {
@@ -26,7 +29,12 @@ export default class WatchStore extends VuexModule {
 
     @Mutation
     setRelatedVideos(videoListBO: VideoBO[]) {
-        this.relatedVideos = videoListBO;
+        this.relatedVideosBO = videoListBO;
+    }
+
+    @Mutation
+    setComments(commentsBO: CommentThreadBO[]) {
+        this.commentsBO = commentsBO;
     }
 
     @Action
@@ -43,26 +51,28 @@ export default class WatchStore extends VuexModule {
                 const videosResponse = await YoutubeClient.youtubeVideosGet().setVideoId(videoId).execute();
                 const video = videosResponse.videos[0];
 
+                this.loadRelatedVideosByCategoryId(video.categoryId);
+
                 const channelsResponse = await YoutubeClient.youtubeChannelsGet().setChannelId(video.channelId).execute();
                 const channel = channelsResponse.channels[0];
 
-                const videoBO = VideoMapper.createBoFromVideoAndChannel(video, channel);
+                const videoBO = VideoBOMapper.createBoFromVideoAndChannel(video, channel);
 
                 this.setVideo(videoBO);
                 set(CACHE_KEY, videoBO);
                 localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
-
-                this.loadVideosByCategoryId(video.categoryId);
             } catch (error) {
-                console.error(error.message);
+                console.error(error);
             }
         } else {
             this.setVideo(value);
+
+            this.loadRelatedVideosByCategoryId(value.categoryId);
         }
     }
 
     @Action
-    async loadVideosByCategoryId(categoryId: string) {
+    async loadRelatedVideosByCategoryId(categoryId: string) {
         const value = await get(CACHE_KEY_RELATED_VIDEOS);
 
         if (
@@ -78,15 +88,50 @@ export default class WatchStore extends VuexModule {
 
                 const channelsResponse = await YoutubeClient.youtubeChannelsGet().setChannelIds(channelIds).execute();
 
-                const relatedVideosBO = VideoMapper.createBoListFromVideoAndChannel(videosResponse.videos, channelsResponse.channels);
+                const relatedVideosBO = VideoBOMapper.createBoListFromVideoAndChannel(
+                    videosResponse.videos,
+                    channelsResponse.channels
+                );
 
                 set(CACHE_KEY_RELATED_VIDEOS, relatedVideosBO);
                 localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
+
+                this.setRelatedVideos(relatedVideosBO);
             } catch (error) {
                 console.error(error);
             }
         } else {
             this.setRelatedVideos(value);
+        }
+    }
+
+    @Action
+    async loadCommentsByVideoId(payload: { videoId: string; order: CommentThreadOrder }) {
+        const value = await get(CACHE_KEY_COMMENTS);
+
+        if (
+            !CacheUtils.isCacheEnabled ||
+            value == null ||
+            value == undefined ||
+            CacheUtils.hasCacheTimeLimitExpired(CACHE_KEY_COMMENTS, CACHE_LIMIT_TIME)
+        ) {
+            try {
+                const commentsResponse = await YoutubeClient.youtubeCommentsGet()
+                    .setOrder(payload.order)
+                    .setVideoId(payload.videoId)
+                    .execute();
+
+                const commentsBOList = commentsResponse.comments.map((comment) => CommentBOMapper.dtoToBo(comment));
+
+                set(CACHE_KEY_COMMENTS, commentsBOList);
+                localStorage.setItem(CACHE_LAST_SAVE_KEY, TimeUtils.getCurrentTimeInSeconds().toString());
+
+                this.setComments(commentsBOList);
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            this.setComments(value);
         }
     }
 }

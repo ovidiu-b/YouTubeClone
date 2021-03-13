@@ -27,7 +27,9 @@ module.exports = {
 
             textLarge: "1634px",
 
-            twoColumnsWatchVideo: "1016px"
+            twoColumnsWatchVideo: "1016px",
+            twoColumnsWatchVideoMax: { max: "1016px" },
+            watchVideoEnableMarginLeft: "1768px"
         }
     },
     variants: {
